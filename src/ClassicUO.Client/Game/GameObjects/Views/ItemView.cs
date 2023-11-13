@@ -42,6 +42,7 @@ using ClassicUO.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MathHelper = ClassicUO.Utility.MathHelper;
+using static ClassicUO.Game.Constants;
 
 namespace ClassicUO.Game.GameObjects
 {
@@ -216,6 +217,7 @@ namespace ClassicUO.Game.GameObjects
             );
 
             bool ishuman = IsHumanCorpse;
+            bool nanized = Array.Exists(Constants.NANIZED, element => element == Amount);
 
             DrawLayer(
                 batcher,
@@ -231,7 +233,8 @@ namespace ClassicUO.Game.GameObjects
                 group,
                 direction,
                 hueVec,
-                depth
+                depth,
+                nanized
             );
 
             for (int i = 0; i < Constants.USED_LAYER_COUNT; i++)
@@ -252,7 +255,8 @@ namespace ClassicUO.Game.GameObjects
                     group,
                     direction,
                     hueVec,
-                    depth
+                    depth,
+                    nanized
                 );
             }
 
@@ -273,7 +277,8 @@ namespace ClassicUO.Game.GameObjects
             byte animGroup,
             byte dir,
             Vector3 hueVec,
-            float depth
+            float depth,
+            bool nanized
         )
         {
             _equipConvData = null;
@@ -354,6 +359,18 @@ namespace ClassicUO.Game.GameObjects
                     return;
                 }
 
+                int frameHeight, frameCenterY;
+                if (nanized)
+                {
+                    frameHeight = (int)(spriteInfo.UV.Height * 0.75f);
+                    frameCenterY = (int)(spriteInfo.Center.Y * 0.75f);
+                }
+                else
+                {
+                    frameHeight = spriteInfo.UV.Height;
+                    frameCenterY = spriteInfo.Center.Y;
+                }
+
                 if (flipped)
                 {
                     posX -= spriteInfo.UV.Width - spriteInfo.Center.X;
@@ -363,7 +380,7 @@ namespace ClassicUO.Game.GameObjects
                     posX -= spriteInfo.Center.X;
                 }
 
-                posY -= spriteInfo.UV.Height + spriteInfo.Center.Y;
+                posY -= frameHeight + frameCenterY;
 
                 if (color == 0)
                 {
@@ -445,11 +462,13 @@ namespace ClassicUO.Game.GameObjects
                         Vector2.Zero,
                         1f,
                         flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        depth + 1f + (i * tiles)
+                        depth + 1f + (i * tiles),
+                        nanized,
+                        ishuman == false
                     //depth + (i * tiles) + (owner.PriorityZ * 0.001f)
                     );
 
-                    pos.Y += rect.Height;
+                    pos.Y += (nanized ? rect.Height * (ishuman ? 0.75f : 0.5f) : rect.Height);
                     rect.Y += rect.Height;
                     rect.Height = remains; // Math.Min(value, remains);
                     remains -= rect.Height;
@@ -560,7 +579,12 @@ namespace ClassicUO.Game.GameObjects
                     || Amount == 0x03DF
                     || Amount == 0x03E2
                     || Amount == 0x02E8
-                    || Amount == 0x02E9;
+                    || Amount == 0x02E9
+                    || MathHelper.InRange(Amount, DWARF_ID_M, DWARF_ID_F)
+                    || MathHelper.InRange(Amount, ELF_ID_M, ELF_ID_F)
+                    || MathHelper.InRange(Amount, ORC_ID_M, ORC_ID_F)
+                    || MathHelper.InRange(Amount, WOLF_ID_M, WOLF_ID_F);
+
 
                 for (int i = -1; i < Constants.USED_LAYER_COUNT; i++)
                 {

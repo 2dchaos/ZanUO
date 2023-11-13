@@ -425,10 +425,10 @@ namespace ClassicUO.Renderer
             PushSprite(texture);
         }
 
-        public void DrawShadow(Texture2D texture, Vector2 position, Rectangle sourceRect, bool flip, float depth)
+        public void DrawShadow(Texture2D texture, Vector2 position, Rectangle sourceRect, bool flip, float depth, bool nanized = false, bool modx = false)
         {
-            float width = sourceRect.Width;
-            float height = sourceRect.Height * 0.5f;
+            float width = nanized && modx ? sourceRect.Width * 0.4f : sourceRect.Width;
+            float height = sourceRect.Height * (nanized ? modx ? 0.2f : 0.375f : 0.5f);
             float translatedY = position.Y + height - 10;
             float ratio = height / width;
 
@@ -504,14 +504,20 @@ namespace ClassicUO.Renderer
             Vector3 mod,
             Vector3 hue,
             bool flip,
-            float depth
+            float depth,
+            bool nanized
         )
         {
             EnsureSize();
 
-            float h03 = sourceRect.Height * mod.X;
-            float h06 = sourceRect.Height * mod.Y;
-            float h09 = sourceRect.Height * mod.Z;
+            float height = sourceRect.Height;
+            if (nanized)
+            {
+                height *= 0.75f;
+            }
+            float h03 = height * mod.X;
+            float h06 = height * mod.Y;
+            float h09 = height * mod.Z;
 
             float sittingOffset = flip ? -8.0f : 8.0f;
 
@@ -868,12 +874,27 @@ namespace ClassicUO.Renderer
             Vector2 origin,
             float scale,
             SpriteEffects effects,
-            float layerDepth
+            float layerDepth,
+            bool nanized = false,
+            bool modx = false
         )
         {
             float sourceX, sourceY, sourceW, sourceH;
             float destW = scale;
             float destH = scale;
+
+            if (nanized)
+            {
+                if (modx)
+                {
+                    destH -= 0.5f;
+                    destW -= 0.5f;
+                }
+                else
+                {
+                    destH -= 0.25f;
+                }
+            }
 
             if (sourceRectangle.HasValue)
             {

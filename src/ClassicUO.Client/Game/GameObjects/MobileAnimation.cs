@@ -36,6 +36,7 @@ using System.Runtime.CompilerServices;
 using ClassicUO.Game.Data;
 using ClassicUO.Assets;
 using ClassicUO.Utility;
+using static ClassicUO.Game.Constants;
 
 namespace ClassicUO.Game.GameObjects
 {
@@ -101,6 +102,18 @@ namespace ClassicUO.Game.GameObjects
 
                 case 0x02B7:
                     g = 666;
+
+                    break;
+
+                case DWARF_ID_F:
+                case ELF_ID_F:
+                case ORC_ID_F:
+                case WOLF_ID_F:
+                case DWARF_ID_M:
+                case ELF_ID_M:
+                case ORC_ID_M:
+                case WOLF_ID_M:
+                    g = g;
 
                     break;
             }

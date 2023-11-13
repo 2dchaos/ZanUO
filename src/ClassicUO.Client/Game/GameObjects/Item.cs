@@ -44,6 +44,7 @@ using ClassicUO.Utility.Logging;
 using ClassicUO.Utility.Platforms;
 using Microsoft.Xna.Framework;
 using MathHelper = ClassicUO.Utility.MathHelper;
+using static ClassicUO.Game.Constants;
 
 namespace ClassicUO.Game.GameObjects
 {
@@ -172,7 +173,11 @@ namespace ClassicUO.Game.GameObjects
             Amount == 0x03DF || 
             Amount == 0x03E2 || 
             Amount == 0x02E8 || 
-            Amount == 0x02E9;
+            Amount == 0x02E9
+            || MathHelper.InRange(Amount, DWARF_ID_M, DWARF_ID_F)
+            || MathHelper.InRange(Amount, ELF_ID_M, ELF_ID_F)
+            || MathHelper.InRange(Amount, ORC_ID_M, ORC_ID_F)
+            || MathHelper.InRange(Amount, WOLF_ID_M, WOLF_ID_F);
 
         public bool OnGround => !SerialHelper.IsValid(Container);
 

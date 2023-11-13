@@ -38,14 +38,18 @@ using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Input;
 using ClassicUO.Assets;
+using ClassicUO.Renderer;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Logging;
 using Microsoft.Xna.Framework;
+using static ClassicUO.Game.Constants;
 
 namespace ClassicUO.Game.UI.Controls
 {
     internal class PaperDollInteractable : Control
     {
+        private const int FIXED_YOFFSET = 44, FIXED_OFFSET = 8;
+
         private static readonly Layer[] _layerOrder =
         {
             Layer.Cloak,
@@ -189,13 +193,47 @@ namespace ClassicUO.Game.UI.Controls
             {
                 body = 0x000D;
             }
+            else if (mobile.Graphic == DWARF_ID_M)
+            {
+                body = DWARF_M_BODY;
+            }
+            else if (mobile.Graphic == DWARF_ID_F)
+            {
+                body = DWARF_F_BODY;
+            }
+            else if (mobile.Graphic == ELF_ID_M)
+            {
+                body = ELF_M_BODY;
+            }
+            else if (mobile.Graphic == ELF_ID_F)
+            {
+                body = ELF_F_BODY;
+            }
+            else if (mobile.Graphic == ORC_ID_M)
+            {
+                body = ORC_M_BODY;
+            }
+            else if (mobile.Graphic == ORC_ID_F)
+            {
+                body = ORC_F_BODY;
+            }
+            else if (mobile.Graphic == WOLF_ID_M)
+            {
+                body = WOLF_M_BODY;
+            }
+            else if (mobile.Graphic == WOLF_ID_F)
+            {
+                body = WOLF_F_BODY;
+            }
             else
             {
                 body = 0x000C;
             }
 
             // body
-            Add(new GumpPic(0, 0, body, hue) { IsPartialHue = true });
+            Add(
+                new GumpPicHeight(0, mobile.IsDwarf ? FIXED_YOFFSET : 0, body, hue, mobile.IsDwarf)
+            );
 
             if (mobile.Graphic == 0x03DB)
             {
@@ -287,7 +325,7 @@ namespace ClassicUO.Game.UI.Controls
                         new GumpPicEquipment(
                             equipItem.Serial,
                             0,
-                            0,
+                            mobile.IsDwarf && layer != Layer.Talisman ? FIXED_YOFFSET : 0, //0,
                             id,
                             (ushort)(equipItem.Hue & 0x3FFF),
                             layer
@@ -322,7 +360,7 @@ namespace ClassicUO.Game.UI.Controls
                         new GumpPicEquipment(
                             0,
                             0,
-                            0,
+                            mobile.IsDwarf && layer != Layer.Talisman ? FIXED_YOFFSET : 0,
                             id,
                             (ushort)(Client.Game.GameCursor.ItemHold.Hue & 0x3FFF),
                             Client.Game.GameCursor.ItemHold.Layer
@@ -382,17 +420,17 @@ namespace ClassicUO.Game.UI.Controls
                     }
                 }
 
-                int bx = 0;
+                //int bx = 0;
 
-                if (World.ClientFeatures.PaperdollBooks)
-                {
-                    bx = 6;
-                }
+                //if (World.ClientFeatures.PaperdollBooks)
+                //{
+                //    bx = 6;
+                //}
 
                 Add(
                     new GumpPicEquipment(
                         equipItem.Serial,
-                        -bx,
+                        0,
                         0,
                         backpackGraphic,
                         (ushort)(equipItem.Hue & 0x3FFF),
@@ -484,6 +522,11 @@ namespace ClassicUO.Game.UI.Controls
                 LocalSerial = serial;
                 CanMove = false;
                 _layer = layer;
+                if (y != 0)
+                {
+                    Bounds.Height = (int)(Height * 0.8f);
+                    UpdateOffset(0, -FIXED_OFFSET);
+                }
 
                 if (SerialHelper.IsValid(serial) && World.InGame)
                 {
@@ -552,6 +595,27 @@ namespace ClassicUO.Game.UI.Controls
             protected override void OnMouseOver(int x, int y)
             {
                 SelectedObject.Object = World.Get(LocalSerial);
+            }
+
+            public override bool Contains(int x, int y)
+            {
+                if (Offset.Y != 0)
+                {
+                    y = (int)(y * 1.2f);
+                }
+                return base.Contains(x, y);
+            }
+        }
+
+        internal class GumpPicHeight : GumpPic
+        {
+            public GumpPicHeight(int x, int y, ushort graphic, ushort hue, bool dwarf) : base(x, y, graphic, hue)
+            {
+                IsPartialHue = true;
+                if (dwarf)
+                {
+                    Bounds.Height -= (int)(Bounds.Height * 0.2f);
+                }
             }
         }
     }

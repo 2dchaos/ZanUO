@@ -40,6 +40,7 @@ using ClassicUO.Resources;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Collections;
 using Microsoft.Xna.Framework;
+using static ClassicUO.Game.Constants;
 
 namespace ClassicUO.Game.GameObjects
 {
@@ -186,11 +187,20 @@ namespace ClassicUO.Game.GameObjects
             || Graphic == 0x03E2
             || Graphic == 0x02E8
             || Graphic == 0x02E9
-            || Graphic == 0x04E5;
+            || Graphic == 0x04E5
+            || Graphic == 0x0724
+            || Graphic == 0x0725
+            || Graphic == ELF_ID_M
+            || Graphic == ELF_ID_F
+            || Graphic == ORC_ID_M
+            || Graphic == ORC_ID_F
+            || Graphic == WOLF_ID_M
+            || Graphic == WOLF_ID_F;
 
         public bool IsGargoyle =>
             Client.Version >= ClientVersion.CV_7000 && Graphic == 0x029A || Graphic == 0x029B;
-
+        public bool IsDwarf => Array.Exists(Constants.NANIZED, element => element == Graphic);
+        public int DwarfYDiff { get; set; }
         public bool IsMounted
         {
             get
@@ -264,7 +274,7 @@ namespace ClassicUO.Game.GameObjects
 
         private void CalculateRandomIdleTime()
         {
-            const int TIME = 30000;
+            const int TIME = 15000;
             _lastAnimationIdleDelay = Time.Ticks + (TIME + RandomHelper.GetValue(0, TIME));
         }
 
@@ -384,8 +394,7 @@ namespace ClassicUO.Game.GameObjects
             AnimIndex = (byte)(forward ? 0 : frameCount);
             _animationInterval = interval;
             AnimationFrameCount = (byte)(forward ? 0 : frameCount);
-            _animationRepeateMode = repeatCount;
-            _animationRepeatModeCount = repeatCount;
+            _animationRepeateMode = (ushort)(repeat ? repeatCount : 1);
             _animationRepeat = repeat;
             _isAnimationForwardDirection = forward;
             AnimationFromServer = fromServer;
@@ -404,7 +413,7 @@ namespace ClassicUO.Game.GameObjects
                 AnimationFrameCount = 0;
                 _animationInterval = 1;
                 _animationRepeateMode = 1;
-                _animationRepeatModeCount = 1;
+                _animationRepeatModeCount = 0;
                 _isAnimationForwardDirection = true;
                 _animationRepeat = false;
                 AnimationFromServer = true;
@@ -660,14 +669,13 @@ namespace ClassicUO.Game.GameObjects
                                 goto SKIP;
                             }
 
-                            if (--_animationRepeateMode > 0) // play animation n times
+                            else if (++_animationRepeatModeCount < _animationRepeateMode) // play animation n times
                             {
                                 goto SKIP;
                             }
 
                             if (_animationRepeat)
                             {
-                                _animationRepeatModeCount = _animationRepeateMode;
 
                                 _animationRepeat = false;
                             }
@@ -1031,7 +1039,7 @@ namespace ClassicUO.Game.GameObjects
 
                     break;
                 }
-
+                
                 case 0x0191:
                 case 0x0193:
                 {
@@ -1069,6 +1077,28 @@ namespace ClassicUO.Game.GameObjects
                 {
                     IsFemale = true;
                     Race = RaceType.GARGOYLE;
+
+                    break;
+                }
+
+                case DWARF_ID_M:
+                case ELF_ID_M:
+                case ORC_ID_M:
+                case WOLF_ID_M:
+                {
+                    IsFemale = false;
+                    Race = RaceType.HUMAN;
+
+                    break;
+                }
+
+                case DWARF_ID_F:
+                case ELF_ID_F:
+                case ORC_ID_F:
+                case WOLF_ID_F:
+                    {
+                    IsFemale = true;
+                    Race = RaceType.HUMAN;
 
                     break;
                 }
