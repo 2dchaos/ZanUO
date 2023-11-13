@@ -723,6 +723,14 @@ namespace ClassicUO.Network
                     UoAssist.SignalStamina();
                     UoAssist.SignalMana();
                 }
+                //Gets the profile URL from the update packet
+                if (p.Position == 43)
+                {
+                    p.Seek(121);
+                }
+
+                entity.ProfileURL = p.ReadASCII();
+
             }
         }
 

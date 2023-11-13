@@ -798,7 +798,7 @@ namespace ClassicUO.Game.GameObjects
                     else
                     {
                         frameHeight = spriteInfo.UV.Height;
-                        frameCenterY = spriteInfo.Center.Y + 1;
+                        frameCenterY = spriteInfo.Center.Y;
                         frameWidth = spriteInfo.UV.Width;
                         frameCenterX = spriteInfo.Center.X;
                         
@@ -808,7 +808,7 @@ namespace ClassicUO.Game.GameObjects
             else
             {
                 frameHeight = spriteInfo.UV.Height;
-                frameCenterY = spriteInfo.Center.Y + 1 ;
+                frameCenterY = spriteInfo.Center.Y ;
                 frameWidth = spriteInfo.UV.Width;
                 frameCenterX = spriteInfo.Center.X;
  
@@ -1191,7 +1191,6 @@ namespace ClassicUO.Game.GameObjects
                 int spriteHeight, spriteCenterY, spriteWidth;
                 if (IsDwarf)
                 {
-                    Debug.WriteLine("Is a dwarf 3");
                     bool modx = IsHuman == false;
                     float mod = modx ? 0.5f : 0.75f;
                     spriteHeight = (int)(spriteInfo.UV.Height * mod);

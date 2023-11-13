@@ -72,7 +72,7 @@ namespace ClassicUO.Game.GameObjects
         public string Name;
         public uint Serial;
         public HitsRequestStatus HitsRequest;
-
+        public string ProfileURL;
 
         public bool IsHidden => (Flags & Flags.Hidden) != 0;
 
