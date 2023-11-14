@@ -71,6 +71,7 @@ namespace ClassicUO.Game.Scenes
             if (Keyboard.Alt)
             {
                 Client.Game.Scene.Camera.PeekingToMouse = true;
+
                 if (!_rightMousePressed)
                 {
                     int x = Camera.Bounds.X + (Camera.Bounds.Width >> 1);
@@ -88,8 +89,7 @@ namespace ClassicUO.Game.Scenes
                     {
                         facing = (Direction)8;
                     }
-                    //Debug.WriteLine("Direction: " + (World.Player.Direction));
-                    //Debug.WriteLine("Facing: " + (facing - 1));
+
                     if ((World.Player.Direction) != (facing - 1))
                     {
                         NetClient.Socket.Send_TurnRequest(facing - 1);
