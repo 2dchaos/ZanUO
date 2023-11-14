@@ -825,6 +825,8 @@ namespace ClassicUO.Game.Scenes
             Pathfinder.ProcessAutoWalk();
             DelayedObjectClickManager.Update();
 
+            TurnCharacterInPlace();
+
             if (!MoveCharacterByMouseInput() && !currentProfile.DisableArrowBtn)
             {
                 Direction dir = DirectionHelper.DirectionFromKeyboardArrows(

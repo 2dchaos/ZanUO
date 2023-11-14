@@ -39,7 +39,7 @@ namespace ClassicUO.Renderer
 {
     public class Camera
     {
-        private const float MAX_PEEK_DISTANCE = 250f;
+        private const float MAX_PEEK_DISTANCE = 400f;
         private const float MIN_PEEK_SPEED = 0.01f;
         private const float PEEK_TIME_FACTOR = 5;
 
@@ -205,7 +205,7 @@ namespace ClassicUO.Renderer
                     target.Y = 2 * origin.Y - target.Y;
                 }
 
-                target_offset = target - origin;
+                target_offset = (target - origin);
                 float length = target_offset.Length();
 
                 if (length > 0)

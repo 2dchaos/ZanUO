@@ -64,6 +64,45 @@ namespace ClassicUO.Game.Scenes
             _selectionEnd;
         private int AnchorOffset => ProfileManager.CurrentProfile.DragSelectAsAnchor ? 0 : 2;
 
+        //peek
+        public void TurnCharacterInPlace()
+        {
+
+            if (Keyboard.Alt)
+            {
+                Client.Game.Scene.Camera.PeekingToMouse = true;
+                if (!_rightMousePressed)
+                {
+                    int x = Camera.Bounds.X + (Camera.Bounds.Width >> 1);
+                    int y = Camera.Bounds.Y + (Camera.Bounds.Height >> 1);
+                    Direction direction = (Direction)GameCursor.GetMouseDirection
+                    (
+                        x,
+                        y,
+                        Mouse.Position.X,
+                        Mouse.Position.Y,
+                        1
+                    );
+                    Direction facing = direction;
+                    if (facing == Direction.North)
+                    {
+                        facing = (Direction)8;
+                    }
+                    //Debug.WriteLine("Direction: " + (World.Player.Direction));
+                    //Debug.WriteLine("Facing: " + (facing - 1));
+                    if ((World.Player.Direction) != (facing - 1))
+                    {
+                        NetClient.Socket.Send_TurnRequest(facing - 1);
+                    }
+
+
+                }
+            }
+            else
+            {
+                Client.Game.Scene.Camera.PeekingToMouse = false;
+            }
+        }
         private bool MoveCharacterByMouseInput()
         {
             if ((_rightMousePressed || _continueRunning) && World.InGame) // && !Pathfinder.AutoWalking)

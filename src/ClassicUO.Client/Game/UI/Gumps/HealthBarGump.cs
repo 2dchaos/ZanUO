@@ -843,6 +843,9 @@ namespace ClassicUO.Game.UI.Gumps
             Entity entity = World.Get(LocalSerial);
 
             string urlProfilePicture = entity.ProfileURL;
+
+            if (string.IsNullOrEmpty(urlProfilePicture)) { return; }
+
             Point _point = new Point(60, 0);
 
             Add(

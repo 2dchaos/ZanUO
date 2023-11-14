@@ -46,6 +46,7 @@ using ClassicUO.Game.UI.Controls;
 using ClassicUO.IO;
 using ClassicUO.Assets;
 using ClassicUO.Utility;
+using System.Diagnostics;
 
 namespace ClassicUO.Network
 {
@@ -3797,6 +3798,35 @@ namespace ClassicUO.Network
             socket.Send(writer.BufferWritten);
             writer.Dispose();
         }
+
+        public static void Send_TurnRequest(this NetClient socket, Direction direction)
+        {
+            const byte ID = 0xb4;
+            int length = 0x0002;
+            var writer = new StackDataWriter(length < 0 ? 64 : length);
+            writer.WriteUInt8(ID);
+
+            if (length < 0)
+            {
+                writer.WriteZero(2);
+            }
+
+            writer.WriteUInt8((byte)direction);
+
+            if (length < 0)
+            {
+                writer.Seek(1, SeekOrigin.Begin);
+                writer.WriteUInt16BE((ushort)writer.BytesWritten);
+            }
+            else
+            {
+                writer.WriteZero(length - writer.BytesWritten);
+            }
+            socket.Send(writer.BufferWritten);
+            writer.Dispose();
+        }
+
+
 
         public static void Send_WalkRequest(this NetClient socket, Direction direction, byte seq, bool run, uint fastWalk)
         {
