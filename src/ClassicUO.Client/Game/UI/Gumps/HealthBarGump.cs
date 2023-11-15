@@ -420,16 +420,16 @@ namespace ClassicUO.Game.UI.Gumps
 
     internal class HealthBarGumpCustom : BaseHealthBarGump
     {
-        internal const int HPB_WIDTH = 180;
-        internal const int HPB_HEIGHT_MULTILINE = 60;
-        internal const int HPB_HEIGHT_SINGLELINE = 60;
+        internal const int HPB_WIDTH = 150;
+        internal const int HPB_HEIGHT_MULTILINE = 50;
+        internal const int HPB_HEIGHT_SINGLELINE = 50;
         private const int HPB_BORDERSIZE = 1;
         private const int HPB_OUTLINESIZE = 1;
 
 
-        internal const int HPB_BAR_WIDTH = 100;
-        private const int HPB_BAR_HEIGHT = 8;
-        private const int HPB_BAR_SPACELEFT = (HPB_WIDTH - HPB_BAR_WIDTH) / 2 + 30;
+        internal const int HPB_BAR_WIDTH = 80;
+        private const int HPB_BAR_HEIGHT = 4;
+        private const int HPB_BAR_SPACELEFT = (HPB_WIDTH - HPB_BAR_WIDTH) / 2;
 
 
         private static Color HPB_COLOR_DRAW_RED = Color.Red;
@@ -843,21 +843,28 @@ namespace ClassicUO.Game.UI.Gumps
             Entity entity = World.Get(LocalSerial);
 
             string urlProfilePicture = entity.ProfileURL;
+            Point _point = new Point(0,0);
+            int xOffset = 0;
+            int yOffset = 0;
 
-            if (string.IsNullOrEmpty(urlProfilePicture)) { return; }
+            if (!string.IsNullOrEmpty(urlProfilePicture))
+            {
+                yOffset = 0;
+                xOffset = 25;
+                _point = new Point(50, 0);
+                Add(
+                  _profilePic = new GumpPicExternalUrl(0, 0, urlProfilePicture, 0, 50, 50, true)
+                );
+            }
 
-            Point _point = new Point(60, 0);
 
-            Add(
-              _profilePic = new GumpPicExternalUrl(0, 0, urlProfilePicture, 0, 60, 60, true)
-            );
 
             if (World.Party.Contains(LocalSerial))
             {
-                Height = HPB_HEIGHT_MULTILINE;
+                Height = HPB_HEIGHT_MULTILINE - yOffset;
                 Width = HPB_WIDTH;
 
-                Add(_background = new AlphaBlendControl(0.7f) { Location = _point, Width = Width - 60, Height = Height, AcceptMouseInput = true, CanMove = true });
+                Add(_background = new AlphaBlendControl(0.7f) { Location = _point, Width = Width - xOffset * 2, Height = Height, AcceptMouseInput = true, CanMove = true });
 
 
                 if (LocalSerial == World.Player)
@@ -871,7 +878,7 @@ namespace ClassicUO.Game.UI.Gumps
                             isunicode: true,
                             style: FontStyle.Cropped | FontStyle.BlackBorder,
                             hue: Notoriety.GetHue((entity as Mobile)?.NotorietyFlag ?? NotorietyFlag.Gray),
-                            maxWidth: Width + 60,
+                            maxWidth: Width + xOffset,
                             align: TEXT_ALIGN_TYPE.TS_CENTER
                         )
                         {
@@ -891,7 +898,7 @@ namespace ClassicUO.Game.UI.Gumps
                         (
                             1,
                             32,
-                            HPB_WIDTH + 60,
+                            HPB_WIDTH + xOffset,
                             true,
                             FontStyle.Cropped | FontStyle.BlackBorder,
                             Notoriety.GetHue((entity as Mobile)?.NotorietyFlag ?? NotorietyFlag.Gray),
@@ -911,7 +918,7 @@ namespace ClassicUO.Game.UI.Gumps
                 (
                     _outline = new LineCHB
                     (
-                        HPB_BAR_SPACELEFT - HPB_OUTLINESIZE,
+                        HPB_BAR_SPACELEFT + xOffset - HPB_OUTLINESIZE,
                         27 - HPB_OUTLINESIZE,
                         HPB_BAR_WIDTH + HPB_OUTLINESIZE * 2,
                         HPB_BAR_HEIGHT * 3 + 2 + HPB_OUTLINESIZE * 2,
@@ -923,7 +930,7 @@ namespace ClassicUO.Game.UI.Gumps
                 (
                     _hpLineRed = new LineCHB
                     (
-                        HPB_BAR_SPACELEFT,
+                        HPB_BAR_SPACELEFT + xOffset,
                         27,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
@@ -935,7 +942,7 @@ namespace ClassicUO.Game.UI.Gumps
                 (
                     _manaLineRed = new LineCHB
                     (
-                        HPB_BAR_SPACELEFT,
+                        HPB_BAR_SPACELEFT + xOffset,
                         36,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
@@ -947,7 +954,7 @@ namespace ClassicUO.Game.UI.Gumps
                 (
                     _stamLineRed = new LineCHB
                     (
-                        HPB_BAR_SPACELEFT,
+                        HPB_BAR_SPACELEFT + xOffset,
                         45,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
@@ -959,7 +966,7 @@ namespace ClassicUO.Game.UI.Gumps
                 (
                     _bars[0] = new LineCHB
                     (
-                        HPB_BAR_SPACELEFT,
+                        HPB_BAR_SPACELEFT + xOffset,
                         27,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
@@ -972,7 +979,7 @@ namespace ClassicUO.Game.UI.Gumps
                 (
                     _bars[1] = new LineCHB
                     (
-                        HPB_BAR_SPACELEFT,
+                        HPB_BAR_SPACELEFT + xOffset,
                         36,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
@@ -985,7 +992,7 @@ namespace ClassicUO.Game.UI.Gumps
                 (
                     _bars[2] = new LineCHB
                     (
-                        HPB_BAR_SPACELEFT,
+                        HPB_BAR_SPACELEFT + xOffset,
                         45,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
@@ -1047,10 +1054,10 @@ namespace ClassicUO.Game.UI.Gumps
                 if (LocalSerial == World.Player)
                 {
                     _oldWarMode = World.Player.InWarMode;
-                    Height = HPB_HEIGHT_MULTILINE;
+                    Height = HPB_HEIGHT_MULTILINE - yOffset;
                     Width = HPB_WIDTH;
 
-                    Add(_background = new AlphaBlendControl(0.7f) { Location = _point, Width = Width - 60, Height = Height, AcceptMouseInput = true, CanMove = true });
+                    Add(_background = new AlphaBlendControl(0.7f) { Location = _point, Width = Width - xOffset * 2, Height = Height, AcceptMouseInput = true, CanMove = true });
 
                     Add
                     (
@@ -1061,13 +1068,13 @@ namespace ClassicUO.Game.UI.Gumps
                             isunicode: true,
                             style: FontStyle.Cropped | FontStyle.BlackBorder,
                             hue: Notoriety.GetHue((entity as Mobile)?.NotorietyFlag ?? NotorietyFlag.Gray),
-                            maxWidth: Width + 60,
+                            maxWidth: Width + xOffset,
                             align: TEXT_ALIGN_TYPE.TS_CENTER
                         )
                         {
                             X = 0,
-                            Y = 3,
-                            Width = HPB_WIDTH,
+                            Y = 0,
+                            Width = HPB_WIDTH + xOffset,
                             IsEditable = false,
                             CanMove = true
                         }
@@ -1077,8 +1084,8 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _outline = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT - HPB_OUTLINESIZE,
-                            27 - HPB_OUTLINESIZE,
+                            HPB_BAR_SPACELEFT + xOffset - HPB_OUTLINESIZE,
+                            21,
                             HPB_BAR_WIDTH + HPB_OUTLINESIZE * 2,
                             HPB_BAR_HEIGHT * 3 + 2 + HPB_OUTLINESIZE * 2,
                             HPB_COLOR_DRAW_BLACK.PackedValue
@@ -1089,8 +1096,8 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _hpLineRed = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
-                            27,
+                            HPB_BAR_SPACELEFT + xOffset,
+                            23,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
                             HPB_COLOR_DRAW_RED.PackedValue
@@ -1101,8 +1108,8 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
-                            36,
+                            HPB_BAR_SPACELEFT + xOffset,
+                            32,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
                             HPB_COLOR_DRAW_RED.PackedValue
@@ -1113,8 +1120,8 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
-                            45,
+                            HPB_BAR_SPACELEFT + xOffset,
+                            41,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
                             HPB_COLOR_DRAW_RED.PackedValue
@@ -1125,8 +1132,8 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _bars[0] = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
-                            27,
+                            HPB_BAR_SPACELEFT + xOffset,
+                            23,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
                             HPB_COLOR_DRAW_BLUE.PackedValue
@@ -1138,8 +1145,8 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _bars[1] = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
-                            36,
+                            HPB_BAR_SPACELEFT + xOffset,
+                            32,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
                             HPB_COLOR_DRAW_BLUE.PackedValue
@@ -1151,8 +1158,8 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _bars[2] = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
-                            45,
+                            HPB_BAR_SPACELEFT + xOffset,
+                            41,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
                             HPB_COLOR_DRAW_BLUE.PackedValue
@@ -1167,7 +1174,7 @@ namespace ClassicUO.Game.UI.Gumps
                             0,
                             0,
                             HPB_WIDTH,
-                            HPB_BORDERSIZE,
+                            HPB_BORDERSIZE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1179,7 +1186,7 @@ namespace ClassicUO.Game.UI.Gumps
                             0,
                             HPB_HEIGHT_MULTILINE - HPB_BORDERSIZE,
                             HPB_WIDTH,
-                            HPB_BORDERSIZE,
+                            HPB_BORDERSIZE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1191,7 +1198,7 @@ namespace ClassicUO.Game.UI.Gumps
                             0,
                             0,
                             HPB_BORDERSIZE,
-                            HPB_HEIGHT_MULTILINE,
+                            HPB_HEIGHT_MULTILINE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1203,7 +1210,7 @@ namespace ClassicUO.Game.UI.Gumps
                             HPB_WIDTH - HPB_BORDERSIZE,
                             0,
                             HPB_BORDERSIZE,
-                            HPB_HEIGHT_MULTILINE,
+                            HPB_HEIGHT_MULTILINE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1219,16 +1226,16 @@ namespace ClassicUO.Game.UI.Gumps
                         _canChangeName = mobile != null && mobile.IsRenamable;
                     }
 
-                    Height = HPB_HEIGHT_SINGLELINE;
+                    Height = HPB_HEIGHT_SINGLELINE - yOffset;
                     Width = HPB_WIDTH;
 
-                    Add(_background = new AlphaBlendControl(0.7f) { Location = _point, Width = Width - 60, Height = Height, AcceptMouseInput = true, CanMove = true });
+                    Add(_background = new AlphaBlendControl(0.7f) { Location = _point, Width = Width - xOffset * 2, Height = Height, AcceptMouseInput = true, CanMove = true });
 
                     Add
                     (
                         _outline = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT - HPB_OUTLINESIZE,
+                            HPB_BAR_SPACELEFT + xOffset - HPB_OUTLINESIZE,
                             29 - HPB_OUTLINESIZE,
                             HPB_BAR_WIDTH + HPB_OUTLINESIZE * 2,
                             HPB_BAR_HEIGHT + HPB_OUTLINESIZE * 2,
@@ -1240,7 +1247,7 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _hpLineRed = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
+                            HPB_BAR_SPACELEFT + xOffset,
                             29,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
@@ -1252,7 +1259,7 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _bars[0] = new LineCHB
                         (
-                            HPB_BAR_SPACELEFT,
+                            HPB_BAR_SPACELEFT + xOffset,
                             29,
                             HPB_BAR_WIDTH,
                             HPB_BAR_HEIGHT,
@@ -1268,7 +1275,7 @@ namespace ClassicUO.Game.UI.Gumps
                             0,
                             0,
                             HPB_WIDTH,
-                            HPB_BORDERSIZE,
+                            HPB_BORDERSIZE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1277,10 +1284,10 @@ namespace ClassicUO.Game.UI.Gumps
                     (
                         _border[1] = new LineCHB
                         (
-                            0,
+                            0 ,
                             HPB_HEIGHT_SINGLELINE - HPB_BORDERSIZE,
                             HPB_WIDTH,
-                            HPB_BORDERSIZE,
+                            HPB_BORDERSIZE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1292,7 +1299,7 @@ namespace ClassicUO.Game.UI.Gumps
                             0,
                             0,
                             HPB_BORDERSIZE,
-                            HPB_HEIGHT_SINGLELINE,
+                            HPB_HEIGHT_SINGLELINE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1304,7 +1311,7 @@ namespace ClassicUO.Game.UI.Gumps
                             HPB_WIDTH - HPB_BORDERSIZE,
                             0,
                             HPB_BORDERSIZE,
-                            HPB_HEIGHT_SINGLELINE,
+                            HPB_HEIGHT_SINGLELINE - yOffset,
                             HPB_COLOR_DRAW_BLACK.PackedValue
                         )
                     );
@@ -1316,16 +1323,16 @@ namespace ClassicUO.Game.UI.Gumps
                         (
                             1,
                             32,
-                            HPB_WIDTH + 60,
+                            HPB_WIDTH + xOffset,
                             true,
                             hue: Notoriety.GetHue((entity as Mobile)?.NotorietyFlag ?? NotorietyFlag.Gray),
                             style: FontStyle.Cropped | FontStyle.BlackBorder,
                             align: TEXT_ALIGN_TYPE.TS_CENTER
                         )
                         {
-                            X = 0,
-                            Y = 0,
-                            Width = HPB_WIDTH,
+                            X = 0 + xOffset/2,
+                            Y = 5,
+                            Width = HPB_WIDTH + xOffset,
                             Height = 15,
                             IsEditable = false,
                             AcceptMouseInput = _canChangeName,
