@@ -882,7 +882,7 @@ namespace ClassicUO.Game.UI.Gumps
                             align: TEXT_ALIGN_TYPE.TS_CENTER
                         )
                         {
-                            X = 0,
+                            X = 0 + xOffset / 2,
                             Y = 3,
                             Width = HPB_WIDTH,
                             IsEditable = false,
@@ -905,8 +905,8 @@ namespace ClassicUO.Game.UI.Gumps
                             TEXT_ALIGN_TYPE.TS_CENTER
                         )
                         {
-                            X = 0,
-                            Y = 3,
+                            X = 0 + xOffset /2,
+                            Y = 0,
                             Width = HPB_WIDTH,
                             IsEditable = false,
                             CanMove = true
@@ -914,24 +914,24 @@ namespace ClassicUO.Game.UI.Gumps
                     );
                 }
 
-                Add
-                (
-                    _outline = new LineCHB
-                    (
-                        HPB_BAR_SPACELEFT + xOffset - HPB_OUTLINESIZE,
-                        27 - HPB_OUTLINESIZE,
-                        HPB_BAR_WIDTH + HPB_OUTLINESIZE * 2,
-                        HPB_BAR_HEIGHT * 3 + 2 + HPB_OUTLINESIZE * 2,
-                        HPB_COLOR_DRAW_BLACK.PackedValue
-                    )
-                );
+                //Add
+                //(
+                //    _outline = new LineCHB
+                //    (
+                //        HPB_BAR_SPACELEFT + xOffset - HPB_OUTLINESIZE,
+                //        21 - HPB_OUTLINESIZE,
+                //        HPB_BAR_WIDTH + HPB_OUTLINESIZE * 2,
+                //        HPB_BAR_HEIGHT * 3 + 4 + HPB_OUTLINESIZE * 4,
+                //        HPB_COLOR_DRAW_BLACK.PackedValue
+                //    )
+                //);
 
                 Add
                 (
                     _hpLineRed = new LineCHB
                     (
                         HPB_BAR_SPACELEFT + xOffset,
-                        27,
+                        23,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
                         HPB_COLOR_DRAW_RED.PackedValue
@@ -943,7 +943,7 @@ namespace ClassicUO.Game.UI.Gumps
                     _manaLineRed = new LineCHB
                     (
                         HPB_BAR_SPACELEFT + xOffset,
-                        36,
+                        32,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
                         HPB_COLOR_DRAW_RED.PackedValue
@@ -955,7 +955,7 @@ namespace ClassicUO.Game.UI.Gumps
                     _stamLineRed = new LineCHB
                     (
                         HPB_BAR_SPACELEFT + xOffset,
-                        45,
+                        41,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
                         HPB_COLOR_DRAW_RED.PackedValue
@@ -967,7 +967,7 @@ namespace ClassicUO.Game.UI.Gumps
                     _bars[0] = new LineCHB
                     (
                         HPB_BAR_SPACELEFT + xOffset,
-                        27,
+                        23,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
                         HPB_COLOR_DRAW_BLUE.PackedValue
@@ -980,7 +980,7 @@ namespace ClassicUO.Game.UI.Gumps
                     _bars[1] = new LineCHB
                     (
                         HPB_BAR_SPACELEFT + xOffset,
-                        36,
+                        32,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
                         HPB_COLOR_DRAW_BLUE.PackedValue
@@ -993,7 +993,7 @@ namespace ClassicUO.Game.UI.Gumps
                     _bars[2] = new LineCHB
                     (
                         HPB_BAR_SPACELEFT + xOffset,
-                        45,
+                        41,
                         HPB_BAR_WIDTH,
                         HPB_BAR_HEIGHT,
                         HPB_COLOR_DRAW_BLUE.PackedValue
@@ -1072,7 +1072,7 @@ namespace ClassicUO.Game.UI.Gumps
                             align: TEXT_ALIGN_TYPE.TS_CENTER
                         )
                         {
-                            X = 0,
+                            X = 0 + xOffset / 2,
                             Y = 0,
                             Width = HPB_WIDTH + xOffset,
                             IsEditable = false,
@@ -1080,17 +1080,17 @@ namespace ClassicUO.Game.UI.Gumps
                         }
                     );
 
-                    Add
-                    (
-                        _outline = new LineCHB
-                        (
-                            HPB_BAR_SPACELEFT + xOffset - HPB_OUTLINESIZE,
-                            21,
-                            HPB_BAR_WIDTH + HPB_OUTLINESIZE * 2,
-                            HPB_BAR_HEIGHT * 3 + 2 + HPB_OUTLINESIZE * 2,
-                            HPB_COLOR_DRAW_BLACK.PackedValue
-                        )
-                    );
+                    //Add
+                    //(
+                    //    _outline = new LineCHB
+                    //    (
+                    //        HPB_BAR_SPACELEFT + xOffset - HPB_OUTLINESIZE,
+                    //        21,
+                    //        HPB_BAR_WIDTH + HPB_OUTLINESIZE * 2,
+                    //        HPB_BAR_HEIGHT * 3 + 4 + HPB_OUTLINESIZE * 3,
+                    //        HPB_COLOR_DRAW_BLACK.PackedValue
+                    //    )
+                    //);
 
                     Add
                     (
