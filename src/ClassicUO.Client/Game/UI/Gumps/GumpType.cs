@@ -40,6 +40,7 @@ namespace ClassicUO.Game.UI.Gumps
         Container,
         CounterBar,
         HealthBar,
+        TabGridGump,
         InfoBar,
         Journal,
         MacroButton,

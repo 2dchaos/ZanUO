@@ -214,6 +214,13 @@ namespace ClassicUO.Configuration
         public bool UseModernPaperdoll { get; set; } = false;
         public bool OpenModernPaperdollAtMinimizeLoc { get; set; } = false;
 
+        // ## BEGIN - END ## tabgrid // PKRION
+        public bool TabGridGumpEnabled { get; set; }
+        public int GridTabs { get; set; } = 1;
+        public int GridRows { get; set; } = 1;
+        public string TabList { get; set; } = "tab1:tab2:tab3";
+        // ## BEGIN - END ## // PKRION
+
         // Experimental
         public bool CastSpellsByOneClick { get; set; }
         public bool BuffBarTime { get; set; }
@@ -755,6 +762,12 @@ namespace ClassicUO.Configuration
                                         gump = new BuffGump(100, 100);
 
                                     break;
+
+                                // ## BEGIN - END ## tabgrid // PKRION
+                                case GumpType.TabGridGump:
+                                    gump = new TabGridGump();
+                                    break;
+                                // ## BEGIN - END ## // PKRION
 
                                 case GumpType.Container:
                                     gump = new ContainerGump();
