@@ -197,6 +197,7 @@ namespace ClassicUO.Game.GameObjects
             || Graphic == WOLF_ID_M
             || Graphic == WOLF_ID_F;
 
+        public bool IsEntityOutOfLOS => Graphic == 16000;
         public bool IsGargoyle =>
             Client.Version >= ClientVersion.CV_7000 && Graphic == 0x029A || Graphic == 0x029B;
         public bool IsDwarf => Array.Exists(Constants.NANIZED, element => element == Graphic);
@@ -563,6 +564,7 @@ namespace ClassicUO.Game.GameObjects
                 && !IsHidden
                 && !IsDead
                 && !IsFlying
+                && IsEntityOutOfLOS
             )
             {
                 if (Steps.Count != 0 && LastStepSoundTime < Time.Ticks)

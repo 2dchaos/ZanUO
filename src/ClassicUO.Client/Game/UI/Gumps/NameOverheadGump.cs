@@ -70,6 +70,7 @@ namespace ClassicUO.Game.UI.Gumps
                 return;
             }
 
+
             _renderedText = RenderedText.Create(
                 string.Empty,
                 entity is Mobile m ? Notoriety.GetHue(m.NotorietyFlag) : (ushort)0x0481,
@@ -548,6 +549,7 @@ namespace ClassicUO.Game.UI.Gumps
                 || entity.IsDestroyed
                 || entity.ObjectHandlesStatus == ObjectHandlesStatus.NONE
                 || entity.ObjectHandlesStatus == ObjectHandlesStatus.CLOSED
+                || entity.Graphic == 16000
             )
             {
                 Dispose();

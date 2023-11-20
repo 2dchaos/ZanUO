@@ -155,7 +155,7 @@ namespace ClassicUO.Game.Scenes
         }
 
         private bool CanDragSelectOnObject(GameObject obj)
-        {
+        {              
             return obj is null
                 || obj is Static
                 || obj is Land
@@ -244,6 +244,7 @@ namespace ClassicUO.Game.Scenes
 
             foreach (Mobile mobile in World.Mobiles.Values)
             {
+
                 if ((
                         (ProfileManager.CurrentProfile.DragSelect_PlayersModifier == 1 && ctrl) ||
                         (ProfileManager.CurrentProfile.DragSelect_PlayersModifier == 2 && shift)
@@ -294,7 +295,7 @@ namespace ClassicUO.Game.Scenes
                 {
                     if (mobile != World.Player)
                     {
-                        if (UIManager.GetGump<BaseHealthBarGump>(mobile) != null)
+                        if (UIManager.GetGump<BaseHealthBarGump>(mobile) != null || mobile.Graphic == 16000)
                         {
                             continue;
                         }
@@ -361,6 +362,7 @@ namespace ClassicUO.Game.Scenes
                         UIManager.Add(hbgc);
 
                         hbgc.SetInScreen();
+
                     }
                 }
             }

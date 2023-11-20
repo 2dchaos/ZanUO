@@ -82,7 +82,7 @@ namespace ClassicUO.Game.GameObjects
 
             bool hasShadow = !IsDead && !IsHidden && ProfileManager.CurrentProfile.ShadowsEnabled;
 
-            if (AuraManager.IsEnabled)
+            if (AuraManager.IsEnabled && Graphic != 16000)
             {
                 AuraManager.Draw(
                     batcher,
