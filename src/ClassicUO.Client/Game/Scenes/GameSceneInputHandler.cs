@@ -68,7 +68,7 @@ namespace ClassicUO.Game.Scenes
         public void TurnCharacterInPlace()
         {
 
-            if (Keyboard.Alt)
+            if (Keyboard.Alt && Keyboard.Shift && Keyboard.Ctrl)
             {
                 Client.Game.Scene.Camera.PeekingToMouse = true;
 

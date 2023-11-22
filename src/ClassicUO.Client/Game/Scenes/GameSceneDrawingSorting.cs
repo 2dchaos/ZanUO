@@ -469,9 +469,7 @@ namespace ClassicUO.Game.Scenes
                 }else if (obj.Graphic == 16000)
                 {
                     obj.AlphaHue = 0;
-
                 }
-               
             }
 
             return true;

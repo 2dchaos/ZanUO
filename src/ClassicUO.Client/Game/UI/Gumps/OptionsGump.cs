@@ -5749,7 +5749,7 @@ namespace ClassicUO.Game.UI.Gumps
             }
             // ## BEGIN - END ## tabgrid // PKRION
             _currentProfile.GridRows = int.Parse(_rowsGrid.Text);
-=           _currentProfile.GridTabs = int.Parse(_tabsGrid.Text);
+            _currentProfile.GridTabs = int.Parse(_tabsGrid.Text);
             _currentProfile.TabList = _tablistBox.Text;
             _currentProfile.TabGridGumpEnabled = _enableTabGridGump.IsChecked;
             bool tabgrid = _currentProfile.TabGridGumpEnabled != _customBars.IsChecked;
