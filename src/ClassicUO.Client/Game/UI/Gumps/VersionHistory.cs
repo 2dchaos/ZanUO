@@ -7,6 +7,22 @@ namespace ClassicUO.Game.UI.Gumps
     internal class VersionHistory : Gump
     {
         private static string[] updateTexts = {
+            "/c[white][3.14.0]/cd\n" +
+                "- Small null ref bug fix\n" +
+                "- No max width on item count text for smaller scaling\n" +
+                "- Auto loot shift-click will no long work if you have shift for context menu or split stacks.\n" +
+                "- Skill progress bars will save their position if you move them\n" +
+                "- Changed skill progress bars to a queue instead of all showing at once\n" +
+                "- Fix art png loading",
+
+            "/c[white][3.13.0]/cd\n" +
+                "- Fix item unintentional stacking\n" +
+                "- Potential small bug fix\n" +
+                "- Option to close anchored healthbars automatically\n" +
+                "- Added optional freeze on cast to spell indicator system\n" +
+                "- Save server side gump positions\n" +
+                "- Added addition equipment slots to the original paperdoll gump",
+
             "/c[white][3.12.0]/cd\n" +
                 "- Added Exclude self to advanced nameplate options\n" +
                 "- Bug fix for spell indicator loading\n" +
