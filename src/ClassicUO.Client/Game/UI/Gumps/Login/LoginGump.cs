@@ -174,7 +174,7 @@ namespace ClassicUO.Game.UI.Gumps.Login
 
                 Add
                 (
-                    new Label(string.Format("TazUO Version {0}", CUOEnviroment.Version), false, 0x034E, font: 9)
+                    new Label(string.Format("ZanUO Version {0}", CUOEnviroment.Version), false, 0x034E, font: 9)
                     {
                         X = 286,
                         Y = 465
@@ -405,63 +405,63 @@ namespace ClassicUO.Game.UI.Gumps.Login
             _checkboxAutologin.IsChecked = Settings.GlobalSettings.AutoLogin;
 
 
-            Add
-            (
-                new HtmlControl
-                (
-                    505,
-                    420,
-                    150,
-                    15,
-                    false,
-                    false,
-                    false,
-                    "<body link=\"#FF00FF00\" vlink=\"#FF00FF00\" ><a href=\"https://www.classicuo.eu/support.php\">Support ClassicUO!",
-                    0x32,
-                    true,
-                    isunicode: true,
-                    style: FontStyle.BlackBorder
-                )
-            );
+            //Add
+            //(
+            //    new HtmlControl
+            //    (
+            //        505,
+            //        420,
+            //        150,
+            //        15,
+            //        false,
+            //        false,
+            //        false,
+            //        "<body link=\"#FF00FF00\" vlink=\"#FF00FF00\" ><a href=\"https://www.classicuo.eu/support.php\">Support ClassicUO!",
+            //        0x32,
+            //        true,
+            //        isunicode: true,
+            //        style: FontStyle.BlackBorder
+            //    )
+            //);
 
 
-            Add
-            (
-                new HtmlControl
-                (
-                    505,
-                    440,
-                    100,
-                    15,
-                    false,
-                    false,
-                    false,
-                    "<body link=\"#FF00FF00\" vlink=\"#FF00FF00\" ><a href=\"https://www.classicuo.eu\">Website",
-                    0x32,
-                    true,
-                    isunicode: true,
-                    style: FontStyle.BlackBorder
-                )
-            );
+            //Add
+            //(
+            //    new HtmlControl
+            //    (
+            //        505,
+            //        440,
+            //        100,
+            //        15,
+            //        false,
+            //        false,
+            //        false,
+            //        "<body link=\"#FF00FF00\" vlink=\"#FF00FF00\" ><a href=\"https://www.classicuo.eu\">Website",
+            //        0x32,
+            //        true,
+            //        isunicode: true,
+            //        style: FontStyle.BlackBorder
+            //    )
+            //);
 
-            Add
-            (
-                new HtmlControl
-                (
-                    505,
-                    460,
-                    100,
-                    15,
-                    false,
-                    false,
-                    false,
-                    "<body link=\"#FF00FF00\" vlink=\"#FF00FF00\" ><a href=\"https://discord.gg/VdyCpjQ\">Join Discord",
-                    0x32,
-                    true,
-                    isunicode: true,
-                    style: FontStyle.BlackBorder
-                )
-            );
+            //Add
+            //(
+            //    new HtmlControl
+            //    (
+            //        505,
+            //        460,
+            //        100,
+            //        15,
+            //        false,
+            //        false,
+            //        false,
+            //        "<body link=\"#FF00FF00\" vlink=\"#FF00FF00\" ><a href=\"https://discord.gg/VdyCpjQ\">Join Discord",
+            //        0x32,
+            //        true,
+            //        isunicode: true,
+            //        style: FontStyle.BlackBorder
+            //    )
+            //);
 
             TextBox _;
             HitBox _hit;
@@ -538,31 +538,31 @@ namespace ClassicUO.Game.UI.Gumps.Login
                 _textboxAccount.SetKeyboardFocus();
             }
 
-            _ = new TextBox("A new version of TazUO is available!\n Click to open the download page.", TrueTypeLoader.EMBEDDED_FONT, 20, 300, Color.Yellow, strokeEffect: false) { X = 10, Y = 10, AcceptMouseInput = false };
-            Add(_hit = new HitBox(_.X, _.Y, _.MeasuredSize.X, _.MeasuredSize.Y));
-            _hit.MouseUp += (s, e) =>
-            {
-                Utility.Platforms.PlatformHelper.LaunchBrowser("https://github.com/bittiez/TazUO/releases/latest");
-            };
-            _hit.Add(new AlphaBlendControl() { Width = _hit.Width, Height = _hit.Height });
-            Add(_);
-            if (!UpdateManager.HasUpdate)
-            {
-                _.IsVisible = false;
-                _hit.IsVisible = false;
-            }
+            //_ = new TextBox("A new version of TazUO is available!\n Click to open the download page.", TrueTypeLoader.EMBEDDED_FONT, 20, 300, Color.Yellow, strokeEffect: false) { X = 10, Y = 10, AcceptMouseInput = false };
+            //Add(_hit = new HitBox(_.X, _.Y, _.MeasuredSize.X, _.MeasuredSize.Y));
+            //_hit.MouseUp += (s, e) =>
+            //{
+            //    Utility.Platforms.PlatformHelper.LaunchBrowser("https://github.com/bittiez/TazUO/releases/latest");
+            //};
+            //_hit.Add(new AlphaBlendControl() { Width = _hit.Width, Height = _hit.Height });
+            //Add(_);
+            //if (!UpdateManager.HasUpdate)
+            //{
+            //    _.IsVisible = false;
+            //    _hit.IsVisible = false;
+            //}
 
-            if (!UpdateManager.SkipUpdateCheck)
-            {
-                UpdateManager.UpdateStatusChanged += (s, e) =>
-                {
-                    if (UpdateManager.HasUpdate)
-                    {
-                        _.IsVisible = true;
-                        _hit.IsVisible = true;
-                    }
-                };
-            }
+            //if (!UpdateManager.SkipUpdateCheck)
+            //{
+            //    UpdateManager.UpdateStatusChanged += (s, e) =>
+            //    {
+            //        if (UpdateManager.HasUpdate)
+            //        {
+            //            _.IsVisible = true;
+            //            _hit.IsVisible = true;
+            //        }
+            //    };
+            //}
 
         }
 

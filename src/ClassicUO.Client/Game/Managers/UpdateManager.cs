@@ -57,8 +57,8 @@ namespace ClassicUO.Game.Managers
         {
             Task.Factory.StartNew(() =>
             {
-                Task.Delay(30000).Wait();
-                GameActions.Print("TazUO has an update available, please visit https://github.com/bittiez/TazUO to get the most recent version.", 32);
+                //Task.Delay(30000).Wait();
+                //GameActions.Print("TazUO has an update available, please visit https://github.com/bittiez/TazUO to get the most recent version.", 32);
             });
         }
     }

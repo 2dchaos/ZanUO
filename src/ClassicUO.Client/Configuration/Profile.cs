@@ -255,7 +255,7 @@ namespace ClassicUO.Configuration
         public bool NameOverheadToggled { get; set; } = false;
         public bool ShowTargetRangeIndicator { get; set; }
         public bool PartyInviteGump { get; set; }
-        public bool CustomBarsToggled { get; set; }
+        public bool CustomBarsToggled { get; set; } = true;
         public bool CBBlackBGToggled { get; set; }
 
         public bool ShowInfoBar { get; set; }

@@ -5340,9 +5340,9 @@ namespace ClassicUO.Game.UI.Gumps
             _currentProfile.AlwaysRun = _alwaysRun.IsChecked;
             _currentProfile.AlwaysRunUnlessHidden = _alwaysRunUnlessHidden.IsChecked;
             _currentProfile.ShowMobilesHP = _showHpMobile.IsChecked;
-            _currentProfile.HighlightMobilesByPoisoned = _highlightByPoisoned.IsChecked;
-            _currentProfile.HighlightMobilesByParalize = _highlightByParalyzed.IsChecked;
-            _currentProfile.HighlightMobilesByInvul = _highlightByInvul.IsChecked;
+            _currentProfile.HighlightMobilesByPoisoned = false;
+            _currentProfile.HighlightMobilesByParalize = false;
+            _currentProfile.HighlightMobilesByInvul = false;
             _currentProfile.PoisonHue = _poisonColorPickerBox.Hue;
             _currentProfile.ParalyzedHue = _paralyzedColorPickerBox.Hue;
             _currentProfile.InvulnerableHue = _invulnerableColorPickerBox.Hue;
@@ -5617,15 +5617,15 @@ namespace ClassicUO.Game.UI.Gumps
                 Client.Game.SetWindowBorderless(_windowBorderless.IsChecked);
             }
 
-            _currentProfile.UseAlternativeLights = _altLights.IsChecked;
+            _currentProfile.UseAlternativeLights = false;
             _currentProfile.UseCustomLightLevel = _enableLight.IsChecked;
             _currentProfile.LightLevel = (byte)(_lightBar.MaxValue - _lightBar.Value);
             _currentProfile.LightLevelType = _lightLevelType.SelectedIndex;
 
             if (_enableLight.IsChecked)
             {
-                World.Light.Overall = _currentProfile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, _currentProfile.LightLevel) : _currentProfile.LightLevel;
-                World.Light.Personal = 0;
+                //World.Light.Overall = _currentProfile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, _currentProfile.LightLevel) : _currentProfile.LightLevel;
+                //World.Light.Personal = 0;
             }
             else
             {
@@ -5634,7 +5634,7 @@ namespace ClassicUO.Game.UI.Gumps
             }
 
             _currentProfile.UseColoredLights = _useColoredLights.IsChecked;
-            _currentProfile.UseDarkNights = _darkNights.IsChecked;
+            _currentProfile.UseDarkNights = true;
             _currentProfile.ShadowsEnabled = _enableShadows.IsChecked;
             _currentProfile.ShadowsStatics = _enableShadowsStatics.IsChecked;
             _currentProfile.TerrainShadowsLevel = _terrainShadowLevel.Value;
