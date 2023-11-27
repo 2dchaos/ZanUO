@@ -574,6 +574,8 @@ namespace ClassicUO.Configuration
         [JsonConverter(typeof(Point2Converter))]
         public Point SkillProgressBarPosition { get; set; } = Point.Zero;
 
+        public bool ForceResyncOnHang { get; set; } = false;
+
 
 
         public void Save(string path, bool saveGumps = true)

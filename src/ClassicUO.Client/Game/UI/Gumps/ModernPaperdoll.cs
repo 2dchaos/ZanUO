@@ -29,6 +29,7 @@ namespace ClassicUO.Game.UI.Gumps
         private readonly Dictionary<Layer[], ItemSlot> itemLayerSlots;
         private Label titleLabel;
         private static int lastX = 100, lastY = 100;
+        private GumpPic backgroundImage;
         #endregion
 
         public override GumpType GumpType => GumpType.PaperDoll;
@@ -58,7 +59,7 @@ namespace ClassicUO.Game.UI.Gumps
             itemLayerSlots = new Dictionary<Layer[], ItemSlot>();
             #endregion
 
-            Add(new GumpPic(0, 0, 40312, ProfileManager.CurrentProfile.ModernPaperDollHue));
+            Add(backgroundImage = new GumpPic(0, 0, 40312, ProfileManager.CurrentProfile.ModernPaperDollHue));
 
             HitBox _menuHit = new HitBox(Width - 26, 1, 25, 16, alpha: 0f);
             Add(_menuHit);
@@ -235,6 +236,19 @@ namespace ClassicUO.Game.UI.Gumps
                 UpdateTitle(m.Title);
         }
 
+        public void UpdateOptions()
+        {
+            backgroundImage.Hue = ProfileManager.CurrentProfile.ModernPaperDollHue;
+        }
+
+        public static void UpdateAllOptions()
+        {
+            foreach (ModernPaperdoll p in UIManager.Gumps.OfType<ModernPaperdoll>())
+            {
+                p.UpdateOptions();
+            }
+        }
+
         public override void Update()
         {
             base.Update();
@@ -344,34 +358,12 @@ namespace ClassicUO.Game.UI.Gumps
 
                 Add(durablityBar = new AlphaBlendControl(0.75f) { Width = 7, Height = Height, Hue = ProfileManager.CurrentProfile.ModernPaperDollDurabilityHue, IsVisible = false });
 
-                //Add(new SimpleBorder() { Width = Width, Height = Height, Alpha = 0.8f });
                 this.layers = layers;
             }
 
             public void AddItem(Item item)
             {
                 itemArea.Add(new ItemGumpFixed(item, Width, Height) { HighlightOnMouseOver = false });
-
-                //ItemGumpFixed highestLayer = null;
-                //foreach (Layer layer in layerOrder)
-                //{
-                //    if (layers.Contains(layer))
-                //        foreach (Control c in itemArea.Children)
-                //        {
-                //            if (c is ItemGumpFixed)
-                //            {
-                //                ItemGumpFixed itemG = (ItemGumpFixed)c;
-                //                itemG.IsVisible = false;
-                //                if ((Layer)itemG.item.ItemData.Layer == layer)
-                //                    highestLayer = itemG;
-                //            }
-                //        }
-                //}
-                //if (highestLayer != null)
-                //{
-                //    highestLayer.IsVisible = true;
-
-                //}
                 UpdateDurability(item);
             }
 
@@ -379,6 +371,9 @@ namespace ClassicUO.Game.UI.Gumps
             {
                 if (!isOPLEvent)
                     durablityBar.IsVisible = false;
+
+                durablityBar.Hue = ProfileManager.CurrentProfile.ModernPaperDollDurabilityHue;
+
                 tcount++;
                 Task.Factory.StartNew(() =>
                 {
@@ -386,11 +381,17 @@ namespace ClassicUO.Game.UI.Gumps
                     //if (!isOPLEvent)
                     //    System.Threading.Thread.Sleep(1500);
                     if (durablityBar.IsDisposed || currentTcount != tcount || item == null)
+                    {
                         return;
+                    }
+
                     if (World.DurabilityManager.TryGetDurability(item.Serial, out DurabiltyProp durabilty))
                     {
-                        if (durabilty.Percentage > (float)ProfileManager.CurrentProfile.ModernPaperDoll_DurabilityPercent / (float)100)
+                        if (durabilty.Percentage >= (float)ProfileManager.CurrentProfile.ModernPaperDoll_DurabilityPercent / (float)100)
+                        {
+                            durablityBar.IsVisible = false;
                             return;
+                        }
                         durablityBar.Height = (int)(Height * durabilty.Percentage);
                         durablityBar.Y = Height - durablityBar.Height;
                         durablityBar.IsVisible = true;
@@ -405,8 +406,11 @@ namespace ClassicUO.Game.UI.Gumps
                                 if (int.TryParse(durability[1].Trim(), out int max))
                                 {
                                     double perecentRemaining = (double)min / (double)max;
-                                    if (perecentRemaining > (double)ProfileManager.CurrentProfile.ModernPaperDoll_DurabilityPercent / (double)100)
+                                    if (perecentRemaining >= (double)ProfileManager.CurrentProfile.ModernPaperDoll_DurabilityPercent / (double)100)
+                                    {
+                                        durablityBar.IsVisible = false;
                                         return;
+                                    }
                                     durablityBar.Height = (int)(Height * perecentRemaining);
                                     durablityBar.Y = Height - durablityBar.Height;
                                     durablityBar.IsVisible = true;
@@ -425,9 +429,8 @@ namespace ClassicUO.Game.UI.Gumps
             {
                 foreach (Control c in itemArea.Children)
                 {
-                    if (c is ItemGumpFixed)
+                    if (c is ItemGumpFixed itemG)
                     {
-                        ItemGumpFixed itemG = (ItemGumpFixed)c;
                         if (itemG.IsVisible && !itemG.IsDisposed && itemG.item.Serial == e.Serial)
                         {
                             UpdateDurability(itemG.item, true);
@@ -481,7 +484,7 @@ namespace ClassicUO.Game.UI.Gumps
                     animID = 0x0223;
                 }
 
-                Client.Game.Animations.ConvertBodyIfNeeded(ref graphic);                
+                Client.Game.Animations.ConvertBodyIfNeeded(ref graphic);
 
                 if (AnimationsLoader.Instance.EquipConversions.TryGetValue(graphic, out Dictionary<ushort, EquipConvData> dict))
                 {
@@ -845,7 +848,18 @@ namespace ClassicUO.Game.UI.Gumps
 
                 Add(PaperDollPreview = new PaperDollInteractable(0, 0, LocalSerial, null) { AcceptMouseInput = false });
 
-                Add(new SimpleBorder() { Width = Width, Height = Height, Alpha = 0.85f });
+                Add(new SimpleBorder() { Width = Width - 1, Height = Height - 1, Alpha = 0.85f });
+
+            }
+
+            protected override void OnMouseUp(int x, int y, MouseButtonType button)
+            {
+                base.OnMouseUp(x, y, button);
+
+                if (Keyboard.Alt && button == MouseButtonType.Left)
+                {
+                    Client.Game.ClipboardScreenshot(Bounds);
+                }
             }
         }
 
