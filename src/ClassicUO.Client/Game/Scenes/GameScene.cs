@@ -1135,7 +1135,15 @@ namespace ClassicUO.Game.Scenes
             }
             else
             {
-                batcher.SetSampler(SamplerState.PointClamp);
+                if(ProfileManager.CurrentProfile.Sampler)
+                {
+                    batcher.SetSampler(SamplerState.AnisotropicClamp);
+                }
+                else
+                {
+                    batcher.SetSampler(SamplerState.PointClamp);
+                }
+               
             }
 
             batcher.Begin(null, matrix);

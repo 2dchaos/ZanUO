@@ -130,7 +130,7 @@ namespace ClassicUO.Game.GameObjects
                     && (isTree || ItemData.IsFoliage || StaticFilters.IsRock(graphic)),
                 depth,
                 ProfileManager.CurrentProfile.AnimatedWaterEffect && ItemData.IsWet,
-                isVegetation || ItemData.IsFoliage /*|| (isTree && !ProfileManager.CurrentProfile.TreeToStumps)*/,
+                isVegetation || ItemData.IsFoliage && ProfileManager.CurrentProfile.Sway /*|| (isTree && !ProfileManager.CurrentProfile.TreeToStumps)*/,
                 (X % 5 + Y % 4)
             );
 

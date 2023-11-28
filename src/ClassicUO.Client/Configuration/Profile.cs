@@ -376,6 +376,10 @@ namespace ClassicUO.Configuration
 
         public bool DisableSystemChat { get; set; } = false;
 
+        public bool Sampler { get; set; } = true;
+
+        public bool Sway { get; set; } = true;
+
         #region GRID CONTAINER
         public bool UseGridLayoutContainerGumps { get; set; } = true;
         public int GridContainerSearchMode { get; set; } = 1;

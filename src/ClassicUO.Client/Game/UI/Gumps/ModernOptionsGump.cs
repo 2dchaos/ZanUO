@@ -511,6 +511,10 @@ namespace ClassicUO.Game.UI.Gumps
             content.AddToRight(new SliderWithLabel("Viewport width", 0, Theme.SLIDER_WIDTH, 0, Client.Game.Window.ClientBounds.Width, profile.GameWindowSize.X, (r) => { profile.GameWindowSize = new Point(r, profile.GameWindowSize.Y); UIManager.GetGump<WorldViewportGump>()?.ResizeGameWindow(profile.GameWindowSize); }), true, page);
             content.AddToRight(new SliderWithLabel("Viewport height", 0, Theme.SLIDER_WIDTH, 0, Client.Game.Window.ClientBounds.Height, profile.GameWindowSize.Y, (r) => { profile.GameWindowSize = new Point(profile.GameWindowSize.X, r); UIManager.GetGump<WorldViewportGump>()?.ResizeGameWindow(profile.GameWindowSize); }), true, page);
 
+            content.AddToRight(new CheckboxWithLabel("Use Sampler", isChecked: profile.Sampler, valueChanged: (b) => { profile.Sampler = b; }), true, page);
+
+            content.AddToRight(new CheckboxWithLabel("Tree sway", isChecked: profile.Sway, valueChanged: (b) => { profile.Sway = b; }), true, page);
+
             #endregion
 
             #region Zoom
@@ -536,48 +540,48 @@ namespace ClassicUO.Game.UI.Gumps
             content.AddToLeft(SubCategoryButton("Lighting", page, content.LeftWidth));
             content.ResetRightSide();
 
-            content.AddToRight(new CheckboxWithLabel("Alternative lights", isChecked: profile.UseAlternativeLights, valueChanged: (b) => { profile.UseAlternativeLights = b; }), true, page);
+            //content.AddToRight(new CheckboxWithLabel("Alternative lights", isChecked: profile.UseAlternativeLights, valueChanged: (b) => { profile.UseAlternativeLights = b; }), true, page);
 
             content.BlankLine();
 
-            content.AddToRight(new CheckboxWithLabel("Custom light level", isChecked: profile.UseCustomLightLevel, valueChanged: (b) =>
-            {
-                profile.UseCustomLightLevel = b;
-                if (b)
-                {
-                    World.Light.Overall = profile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, profile.LightLevel) : profile.LightLevel;
-                    World.Light.Personal = 0;
-                }
-                else
-                {
-                    World.Light.Overall = World.Light.RealOverall;
-                    World.Light.Personal = World.Light.RealPersonal;
-                }
-            }), true, page);
-            content.Indent();
-            content.AddToRight(new SliderWithLabel("Light level", 0, Theme.SLIDER_WIDTH, 0, 0x1E, 0x1E - profile.LightLevel, (r) =>
-            {
-                profile.LightLevel = (byte)(0x1E - r);
-                if (profile.UseCustomLightLevel)
-                {
-                    World.Light.Overall = profile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, profile.LightLevel) : profile.LightLevel;
-                    World.Light.Personal = 0;
-                }
-                else
-                {
-                    World.Light.Overall = World.Light.RealOverall;
-                    World.Light.Personal = World.Light.RealPersonal;
-                }
-            }), true, page);
+            //content.AddToRight(new CheckboxWithLabel("Custom light level", isChecked: profile.UseCustomLightLevel, valueChanged: (b) =>
+            //{
+            //    profile.UseCustomLightLevel = b;
+            //    if (b)
+            //    {
+            //        World.Light.Overall = profile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, profile.LightLevel) : profile.LightLevel;
+            //        World.Light.Personal = 0;
+            //    }
+            //    else
+            //    {
+            //        World.Light.Overall = World.Light.RealOverall;
+            //        World.Light.Personal = World.Light.RealPersonal;
+            //    }
+            //}), true, page);
+            //content.Indent();
+            //content.AddToRight(new SliderWithLabel("Light level", 0, Theme.SLIDER_WIDTH, 0, 0x1E, 0x1E - profile.LightLevel, (r) =>
+            //{
+            //    profile.LightLevel = (byte)(0x1E - r);
+            //    if (profile.UseCustomLightLevel)
+            //    {
+            //        World.Light.Overall = profile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, profile.LightLevel) : profile.LightLevel;
+            //        World.Light.Personal = 0;
+            //    }
+            //    else
+            //    {
+            //        World.Light.Overall = World.Light.RealOverall;
+            //        World.Light.Personal = World.Light.RealPersonal;
+            //    }
+            //}), true, page);
             content.RemoveIndent();
 
             content.BlankLine();
 
-            content.AddToRight(new ComboBoxWithLabel("Light level type", 0, Theme.COMBO_BOX_WIDTH, new string[] { "Absolute", "Minimum" }, profile.LightLevelType, (s, n) => { profile.LightLevelType = s; }), true, page);
+            //content.AddToRight(new ComboBoxWithLabel("Light level type", 0, Theme.COMBO_BOX_WIDTH, new string[] { "Absolute", "Minimum" }, profile.LightLevelType, (s, n) => { profile.LightLevelType = s; }), true, page);
 
             content.BlankLine();
 
-            content.AddToRight(new CheckboxWithLabel("Dark nights", isChecked: profile.UseDarkNights, valueChanged: (b) => { profile.UseDarkNights = b; }), true, page);
+            //content.AddToRight(new CheckboxWithLabel("Dark nights", isChecked: profile.UseDarkNights, valueChanged: (b) => { profile.UseDarkNights = b; }), true, page);
 
             content.BlankLine();
 
