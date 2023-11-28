@@ -564,7 +564,7 @@ namespace ClassicUO.Game.GameObjects
                 && !IsHidden
                 && !IsDead
                 && !IsFlying
-                && IsEntityOutOfLOS
+                || IsEntityOutOfLOS
             )
             {
                 if (Steps.Count != 0 && LastStepSoundTime < Time.Ticks)

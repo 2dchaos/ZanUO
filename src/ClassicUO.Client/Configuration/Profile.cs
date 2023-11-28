@@ -243,6 +243,7 @@ namespace ClassicUO.Configuration
         public int DragSelect_NameplateModifier { get; set; } = 0;
         public bool OverrideContainerLocation { get; set; }
 
+        public bool OldJournal { get; set; } = false;
         public int OverrideContainerLocationSetting { get; set; } // 0 = container position, 1 = top right of screen, 2 = last dragged position, 3 = remember every container
 
         [JsonConverter(typeof(Point2Converter))] public Point OverrideContainerLocationPosition { get; set; } = new Point(200, 200);
@@ -812,8 +813,16 @@ namespace ClassicUO.Configuration
                                     break;
 
                                 case GumpType.Journal:
-                                    //gump = new JournalGump();
-                                    gump = new ResizableJournal();
+                                    if (!ProfileManager.CurrentProfile.OldJournal)
+                                    {
+                                        gump = new ResizableJournal();
+                                        
+                                    }
+                                    else
+                                    {
+                                        gump = new JournalGump();
+                                    }
+                                    
                                     x = ProfileManager.CurrentProfile.JournalPosition.X;
                                     y = ProfileManager.CurrentProfile.JournalPosition.Y;
                                     break;

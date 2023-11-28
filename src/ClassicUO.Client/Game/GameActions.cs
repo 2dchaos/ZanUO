@@ -147,30 +147,38 @@ namespace ClassicUO.Game
 
         public static void OpenJournal()
         {
-            ResizableJournal resizableJournal = UIManager.GetGump<ResizableJournal>();
-            if (resizableJournal == null)
-                UIManager.Add(new ResizableJournal());
+            if(!ProfileManager.CurrentProfile.OldJournal)
+            {
+                ResizableJournal resizableJournal = UIManager.GetGump<ResizableJournal>();
+                if (resizableJournal == null)
+                    UIManager.Add(new ResizableJournal());
+                else
+                {
+                    resizableJournal.SetInScreen();
+                    resizableJournal.BringOnTop();
+                }
+            }
             else
             {
-                resizableJournal.SetInScreen();
-                resizableJournal.BringOnTop();
+                JournalGump journalGump = UIManager.GetGump<JournalGump>();
+
+                if (journalGump == null)
+                {
+                    UIManager.Add(new JournalGump { X = 64, Y = 64 });
+                }
+                else
+                {
+                    journalGump.SetInScreen();
+                    journalGump.BringOnTop();
+
+                    if (journalGump.IsMinimized)
+                    {
+                        journalGump.IsMinimized = false;
+                    }
+                }
             }
-            //JournalGump journalGump = UIManager.GetGump<JournalGump>();
+  
 
-            //if (journalGump == null)
-            //{
-            //    UIManager.Add(new JournalGump { X = 64, Y = 64 });
-            //}
-            //else
-            //{
-            //    journalGump.SetInScreen();
-            //    journalGump.BringOnTop();
-
-            //    if (journalGump.IsMinimized)
-            //    {
-            //        journalGump.IsMinimized = false;
-            //    }
-            //}
         }
 
         public static void OpenSkills()

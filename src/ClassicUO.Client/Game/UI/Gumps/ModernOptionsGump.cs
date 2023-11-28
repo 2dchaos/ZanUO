@@ -542,7 +542,7 @@ namespace ClassicUO.Game.UI.Gumps
 
             //content.AddToRight(new CheckboxWithLabel("Alternative lights", isChecked: profile.UseAlternativeLights, valueChanged: (b) => { profile.UseAlternativeLights = b; }), true, page);
 
-            content.BlankLine();
+            //content.BlankLine();
 
             //content.AddToRight(new CheckboxWithLabel("Custom light level", isChecked: profile.UseCustomLightLevel, valueChanged: (b) =>
             //{
@@ -573,17 +573,17 @@ namespace ClassicUO.Game.UI.Gumps
             //        World.Light.Personal = World.Light.RealPersonal;
             //    }
             //}), true, page);
-            content.RemoveIndent();
+            //content.RemoveIndent();
 
-            content.BlankLine();
+            //content.BlankLine();
 
             //content.AddToRight(new ComboBoxWithLabel("Light level type", 0, Theme.COMBO_BOX_WIDTH, new string[] { "Absolute", "Minimum" }, profile.LightLevelType, (s, n) => { profile.LightLevelType = s; }), true, page);
 
-            content.BlankLine();
+            //content.BlankLine();
 
             //content.AddToRight(new CheckboxWithLabel("Dark nights", isChecked: profile.UseDarkNights, valueChanged: (b) => { profile.UseDarkNights = b; }), true, page);
 
-            content.BlankLine();
+            //content.BlankLine();
 
             content.AddToRight(new CheckboxWithLabel("Colored lighting", isChecked: profile.UseColoredLights, valueChanged: (b) => { profile.UseColoredLights = b; }), true, page);
 
@@ -878,7 +878,6 @@ namespace ClassicUO.Game.UI.Gumps
                 ));
             PositionHelper.PositionControl(s.FullControl);
 
-
             PositionHelper.BlankLine();
 
 
@@ -1015,6 +1014,18 @@ namespace ClassicUO.Game.UI.Gumps
                 PAGE.Speech
             ));
             PositionHelper.PositionExact(s.FullControl, 200, ss.FullControl.Y);
+
+            PositionHelper.BlankLine();
+
+            options.Add(s = new SettingsOption(
+                    "",
+                    new CheckboxWithLabel("Old Style Journal", 0, profile.OldJournal, (b) => { profile.OldJournal = b; }),
+                    mainContent.RightWidth,
+                    PAGE.Speech
+                ));
+            PositionHelper.PositionControl(s.FullControl);
+            ss = s;
+            PositionHelper.BlankLine();
         }
 
         private void BuildCombatSpells()
