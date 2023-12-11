@@ -38,6 +38,7 @@ using ClassicUO.Game;
 
 using Timer = System.Timers.Timer;
 using ClassicUO.Game.Scenes;
+using ClassicUO.Game.GameObjects;
 
 namespace ClassicUO.Input
 {
@@ -55,6 +56,8 @@ namespace ClassicUO.Input
         public static bool Return { get; private set; }
         public static bool Whisper { get; private set; }
         public static bool Command { get; private set; }
+
+        public static bool Party { get; private set; }
 
 
         public static bool Backspace { get; private set; }
@@ -107,14 +110,18 @@ namespace ClassicUO.Input
             Ctrl = (e.keysym.mod & SDL.SDL_Keymod.KMOD_CTRL) != SDL.SDL_Keymod.KMOD_NONE;
             Return = e.keysym.sym == SDL.SDL_Keycode.SDLK_RETURN;
             Whisper = e.keysym.sym == SDL.SDL_Keycode.SDLK_SEMICOLON;
-            Command = e.keysym.sym == SDL.SDL_Keycode.SDLK_COMMA;
+            Command = e.keysym.sym == SDL.SDL_Keycode.SDLK_KP_PERIOD;
             Backspace = e.keysym.sym == SDL.SDL_Keycode.SDLK_BACKSPACE;
+            Party = e.keysym.sym == SDL.SDL_Keycode.SDLK_SLASH;
 
             LoginScene ls = Client.Game.GetScene<LoginScene>();
 
             if (!Ctrl && !Alt && !Return)
             {
-                if (Whisper || Command)
+                if ((World.Player.IsHidden))
+                    return;
+
+                if (Whisper || Command || Party)
                 {
                     KeyCount = -200;
                     return;
