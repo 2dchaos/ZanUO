@@ -57,7 +57,7 @@ namespace ClassicUO.Input
         public static bool Whisper { get; private set; }
         public static bool Command { get; private set; }
 
-        public static bool Party { get; private set; }
+        public static bool PartyKey { get; private set; }
 
 
         public static bool Backspace { get; private set; }
@@ -112,16 +112,21 @@ namespace ClassicUO.Input
             Whisper = e.keysym.sym == SDL.SDL_Keycode.SDLK_SEMICOLON;
             Command = e.keysym.sym == SDL.SDL_Keycode.SDLK_KP_PERIOD;
             Backspace = e.keysym.sym == SDL.SDL_Keycode.SDLK_BACKSPACE;
-            Party = e.keysym.sym == SDL.SDL_Keycode.SDLK_SLASH;
+            PartyKey = e.keysym.sym == SDL.SDL_Keycode.SDLK_SLASH;
 
             LoginScene ls = Client.Game.GetScene<LoginScene>();
 
             if (!Ctrl && !Alt && !Return)
             {
+                if (ls != null)
+                {
+                    return;
+                }
+
                 if ((World.Player.IsHidden))
                     return;
 
-                if (Whisper || Command || Party)
+                if (Whisper || Command || PartyKey)
                 {
                     KeyCount = -200;
                     return;
