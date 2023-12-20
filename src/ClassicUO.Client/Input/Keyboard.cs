@@ -118,7 +118,7 @@ namespace ClassicUO.Input
 
             if (!Ctrl && !Alt && !Return)
             {
-                if (ls != null)
+                if (ls != null || Command || PartyKey)
                 {
                     return;
                 }
@@ -126,7 +126,7 @@ namespace ClassicUO.Input
                 if ((World.Player.IsHidden))
                     return;
 
-                if (Whisper || Command || PartyKey)
+                if (Whisper)
                 {
                     KeyCount = -200;
                     return;
