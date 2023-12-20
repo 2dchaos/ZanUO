@@ -7,6 +7,18 @@ namespace ClassicUO.Game.UI.Gumps
     internal class VersionHistory : Gump
     {
         private static string[] updateTexts = {
+             "/c[white][3.16.0]/cd\n" +
+                "- Some small improvements for input boxes and the new option menu\n" +
+                "- Added player position offset option in TazUO->Misc\n" +
+                "- Fix for health indicator percentage\n" +
+                "- Fix tooltip centered text",
+
+            "/c[white][3.15.0]/cd\n" +
+                "- Mouse interaction for overhead text can be disabled\n" +
+                "- Visable layers option added in Options->TazUO\n" +
+                "- Added custom XML Gumps -> see wiki\n" +
+                "- Added some controller support for movement and macros",
+
             "/c[white][3.14.0]/cd\n" +
                 "- New options menu\n" +
                 "- Small null ref bug fix\n" +
@@ -19,7 +31,9 @@ namespace ClassicUO.Game.UI.Gumps
                 "- Added an auto resync option under Options->TazUO->Misc\n" +
                 "- Alt + Click paperdoll preview in modern paperdoll to copy a screenshot of it\n" +
                 "- Added `both` option to auto close gumps range or dead\n" +
-                "- Added shift + double click to advanced shop gump to buy/sell all of that item",
+                "- Added shift + double click to advanced shop gump to buy/sell all of that item\n" +
+                "- Added use one health bar for last attack option\n" +
+                "- Added `-optlink` command",
 
             "/c[white][3.13.0]/cd\n" +
                 "- Fix item unintentional stacking\n" +

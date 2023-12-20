@@ -50,6 +50,7 @@ using ClassicUO.Utility.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SDL2;
+using ClassicUO.Game.UI;
 
 namespace ClassicUO.Game.Scenes
 {
@@ -137,6 +138,8 @@ namespace ClassicUO.Game.Scenes
         {
             base.Load();
 
+            UISettings.Preload();
+
             Client.Game.Window.AllowUserResizing = true;
 
             Camera.Zoom = ProfileManager.CurrentProfile.DefaultScale;
@@ -211,6 +214,11 @@ namespace ClassicUO.Game.Scenes
                         UpdateManager.SendDelayedUpdateMessage();
                     }
                 };
+            }
+
+            foreach(var xml in ProfileManager.CurrentProfile.AutoOpenXmlGumps)
+            {
+                XmlGumpHandler.TryAutoOpenByName(xml);
             }
         }
 

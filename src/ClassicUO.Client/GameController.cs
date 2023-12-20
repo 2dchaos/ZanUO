@@ -37,6 +37,8 @@ using ClassicUO.Game.Data;
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.Scenes;
+using ClassicUO.Game.UI;
+using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Input;
 using ClassicUO.Network;
@@ -682,7 +684,33 @@ namespace ClassicUO
 
                     if (sdlEvent->key.keysym.sym == SDL_Keycode.SDLK_PRINTSCREEN)
                     {
-                        TakeScreenshot();
+                        if (Keyboard.Ctrl)
+                        {
+                            if (Tooltip.IsEnabled)
+                            {
+                                ClipboardScreenshot(new Rectangle(Tooltip.X, Tooltip.Y, Tooltip.Width, Tooltip.Height), GraphicsDevice);
+                            }
+                            else if (MultipleToolTipGump.SSIsEnabled)
+                            {
+                                ClipboardScreenshot(new Rectangle(MultipleToolTipGump.SSX, MultipleToolTipGump.SSY, MultipleToolTipGump.SSWidth, MultipleToolTipGump.SSHeight), GraphicsDevice);
+                            }
+                            else if (UIManager.MouseOverControl != null && UIManager.MouseOverControl.IsVisible)
+                            {
+                                Control c = UIManager.MouseOverControl.RootParent;
+                                if (c != null)
+                                {
+                                    ClipboardScreenshot(c.Bounds, GraphicsDevice);
+                                }
+                                else
+                                {
+                                    ClipboardScreenshot(UIManager.MouseOverControl.Bounds, GraphicsDevice);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            TakeScreenshot();
+                        }
                     }
 
                     break;
@@ -895,6 +923,84 @@ namespace ClassicUO
 
                         break;
                     }
+
+                case SDL_EventType.SDL_CONTROLLERBUTTONDOWN:
+                    Controller.OnButtonDown(sdlEvent->cbutton);
+                    UIManager.KeyboardFocusControl?.InvokeControllerButtonDown((SDL_GameControllerButton)sdlEvent->cbutton.button);
+                    Scene.OnControllerButtonDown(sdlEvent->cbutton);
+
+                    if (sdlEvent->cbutton.button == (byte)SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+                    {
+                        SDL_Event e = new SDL_Event();
+                        e.type = SDL_EventType.SDL_MOUSEBUTTONDOWN;
+                        e.button.button = (byte)MouseButtonType.Left;
+                        SDL2.SDL.SDL_PushEvent(ref e);
+                    }
+                    else if (sdlEvent->cbutton.button == (byte)SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK)
+                    {
+                        SDL_Event e = new SDL_Event();
+                        e.type = SDL_EventType.SDL_MOUSEBUTTONDOWN;
+                        e.button.button = (byte)MouseButtonType.Right;
+                        SDL2.SDL.SDL_PushEvent(ref e);
+                    }
+                    else if (sdlEvent->cbutton.button == (byte)SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_START && World.InGame)
+                    {
+                        Gump g = UIManager.GetGump<ModernOptionsGump>();
+                        if(g == null)
+                        {
+                            UIManager.Add(new ModernOptionsGump());
+                        } else
+                        {
+                            g.Dispose();
+                        }
+                    }
+                    break;
+
+                case SDL_EventType.SDL_CONTROLLERBUTTONUP:
+                    Controller.OnButtonUp(sdlEvent->cbutton);
+                    UIManager.KeyboardFocusControl?.InvokeControllerButtonUp((SDL_GameControllerButton)sdlEvent->cbutton.button);
+                    Scene.OnControllerButtonUp(sdlEvent->cbutton);
+
+                    if (sdlEvent->cbutton.button == (byte)SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+                    {
+                        SDL_Event e = new SDL_Event();
+                        e.type = SDL_EventType.SDL_MOUSEBUTTONUP;
+                        e.button.button = (byte)MouseButtonType.Left;
+                        SDL2.SDL.SDL_PushEvent(ref e);
+                    }
+                    else if (sdlEvent->cbutton.button == (byte)SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK)
+                    {
+                        SDL_Event e = new SDL_Event();
+                        e.type = SDL_EventType.SDL_MOUSEBUTTONUP;
+                        e.button.button = (byte)MouseButtonType.Right;
+                        SDL2.SDL.SDL_PushEvent(ref e);
+                    }
+                    break;
+
+                case SDL_EventType.SDL_CONTROLLERAXISMOTION: //Work around because sdl doesn't see trigger buttons as buttons, they are axis probably for pressure support
+                    //GameActions.Print(typeof(SDL_GameControllerButton).GetEnumName((SDL_GameControllerButton)sdlEvent->cbutton.button));
+                    if (sdlEvent->cbutton.button == (byte)SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK || sdlEvent->cbutton.button == (byte)SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_GUIDE) //Left trigger BACK Right trigger GUIDE
+                    {
+                        if (sdlEvent->caxis.axisValue > 32000)
+                        {
+                            if (
+                                ((SDL_GameControllerButton)sdlEvent->cbutton.button == SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK && !Controller.Button_LeftTrigger)
+                                || ((SDL_GameControllerButton)sdlEvent->cbutton.button == SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_GUIDE && !Controller.Button_RightTrigger)
+                                )
+                            {
+                                Controller.OnButtonDown(sdlEvent->cbutton);
+                                UIManager.KeyboardFocusControl?.InvokeControllerButtonDown((SDL_GameControllerButton)sdlEvent->cbutton.button);
+                                Scene.OnControllerButtonDown(sdlEvent->cbutton);
+                            }
+                        }
+                        else if (sdlEvent->caxis.axisValue < 5000)
+                        {
+                            Controller.OnButtonUp(sdlEvent->cbutton);
+                            UIManager.KeyboardFocusControl?.InvokeControllerButtonUp((SDL_GameControllerButton)sdlEvent->cbutton.button);
+                            Scene.OnControllerButtonUp(sdlEvent->cbutton);
+                        }
+                    }
+                    break;
             }
 
             return 1;
@@ -956,11 +1062,11 @@ namespace ClassicUO
             }
         }
 
-        public void ClipboardScreenshot(Rectangle position)
+        public void ClipboardScreenshot(Rectangle position, GraphicsDevice graphicDevice)
         {
             Color[] colors = new Color[position.Width * position.Height];
 
-            GraphicsDevice.GetBackBufferData(position, colors, 0, colors.Length);
+            graphicDevice.GetBackBufferData(position, colors, 0, colors.Length);
 
             using (
                 Texture2D texture = new Texture2D(
@@ -971,19 +1077,50 @@ namespace ClassicUO
                     SurfaceFormat.Color
                 )
             )
-            using (MemoryStream stream = new MemoryStream())
             {
                 texture.SetData(colors);
-                texture.SaveAsPng(stream, texture.Width, texture.Height);
 
                 if (CUOEnviroment.IsUnix)
                 {
+                    string screenshotsFolder = FileSystemHelper.CreateFolderIfNotExists(
+                        CUOEnviroment.ExecutablePath,
+                        "Data",
+                        "Client",
+                        "Screenshots"
+                    );
 
+                    string path = Path.Combine(
+                        screenshotsFolder,
+                        $"screenshot_{DateTime.Now:yyyy-MM-dd_hh-mm-ss}.png"
+                    );
+
+                    using FileStream fileStream = File.Create(path);
+                    texture.SaveAsPng(fileStream, texture.Width, texture.Height);
+                    string message = string.Format(ResGeneral.ScreenshotStoredIn0, path);
+
+                    if (ProfileManager.CurrentProfile == null || ProfileManager.CurrentProfile.HideScreenshotStoredInMessage)
+                    {
+                        Log.Info(message);
+                    }
+                    else
+                    {
+                        GameActions.Print(message, 0x44, MessageType.System);
+                    }
                 }
                 else
                 {
-                    System.Windows.Forms.Clipboard.SetImage(System.Drawing.Image.FromStream(stream));
-                    GameActions.Print("Copied screenshot to your clipboard");
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        texture.SaveAsPng(stream, texture.Width, texture.Height);
+
+                        try
+                        {
+                            System.Windows.Forms.Clipboard.SetImage(System.Drawing.Image.FromStream(stream));
+                            GameActions.Print("Copied screenshot to your clipboard");
+                        }
+                        catch { }
+                    }
+
                 }
             }
         }

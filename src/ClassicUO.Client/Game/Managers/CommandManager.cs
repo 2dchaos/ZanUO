@@ -32,9 +32,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Data;
 using ClassicUO.Game.GameObjects;
+using ClassicUO.Game.UI;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Input;
@@ -233,6 +235,30 @@ namespace ClassicUO.Game.Managers
                     UIManager.Add(new ModernPaperdoll(World.Player));
                 }
 
+            });
+
+            Register("optlink", (s) =>
+            {
+                ModernOptionsGump g = UIManager.GetGump<ModernOptionsGump>();
+                if (s.Length > 1)
+                {
+                    if (g != null)
+                    {
+                        g.GoToPage(s[1]);
+                    }
+                    else
+                    {
+                        UIManager.Add(g = new ModernOptionsGump());
+                        g.GoToPage(s[1]);
+                    }
+                }
+                else
+                {
+                    if (g != null)
+                    {
+                        GameActions.Print(g.GetPageString());
+                    }
+                }
             });
         }
 

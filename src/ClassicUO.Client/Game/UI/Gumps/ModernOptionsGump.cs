@@ -17,6 +17,7 @@ using ClassicUO.Resources;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.IO;
+using ClassicUO.Game.Data;
 
 namespace ClassicUO.Game.UI.Gumps
 {
@@ -670,6 +671,7 @@ namespace ClassicUO.Game.UI.Gumps
                         MacroControl macroControl = new MacroControl(name);
 
                         content.AddToLeft(nb = new ModernButton(0, 0, content.LeftWidth, 40, ButtonAction.SwitchPage, name, Theme.BUTTON_FONT_COLOR) { ButtonParameter = page + 1 + content.LeftArea.Children.Count, Tag = macroControl.Macro });
+                        content.ResetRightSide();
                         content.AddToRight(macroControl, true, nb.ButtonParameter);
 
                         nb.IsSelected = true;
@@ -1428,6 +1430,8 @@ namespace ClassicUO.Game.UI.Gumps
                 InfoBarBuilderControl ibbc = new InfoBarBuilderControl(ibi = new InfoBarItem("HP", InfoBarVars.HP, 0x3B9));
                 infoBarItems.Add(ibbc);
                 infoBarItems.ReArrangeChildren();
+                infoBarItems.ForceSizeUpdate();
+                infoBarItems.Parent?.ForceSizeUpdate();
                 Client.Game.GetScene<GameScene>().InfoBars?.AddItem(ibi);
                 UIManager.GetGump<InfoBarGump>()?.ResetItems();
             };
@@ -1467,6 +1471,7 @@ namespace ClassicUO.Game.UI.Gumps
                 infoBarItems.Add(ibbc);
             }
             infoBarItems.ReArrangeChildren();
+            infoBarItems.ForceSizeUpdate();
 
             options.Add(s = new SettingsOption(
                     "",
@@ -1900,6 +1905,7 @@ namespace ClassicUO.Game.UI.Gumps
                 conditionsDataBox.Add(GenConditionControl(i, mainContent.RightWidth - 19, false));
             }
             conditionsDataBox.ReArrangeChildren();
+            conditionsDataBox.ForceSizeUpdate();
 
             options.Add(s = new SettingsOption(
                 "",
@@ -2084,6 +2090,9 @@ namespace ClassicUO.Game.UI.Gumps
             content.BlankLine();
 
             content.AddToRight(c = new CheckboxWithLabel("Automatically open health bars for last attack", 0, profile.OpenHealthBarForLastAttack, (b) => { profile.OpenHealthBarForLastAttack = b; }), true, page);
+            content.Indent();
+            content.AddToRight(c = new CheckboxWithLabel("Update one bar as last attack", 0, profile.UseOneHPBarForLastAttack, (b) => { profile.UseOneHPBarForLastAttack = b; }), true, page);
+            content.RemoveIndent();
 
             content.BlankLine();
 
@@ -2099,6 +2108,11 @@ namespace ClassicUO.Game.UI.Gumps
             content.BlankLine();
 
             content.AddToRight(new SliderWithLabel("Auto follow distance", 0, Theme.SLIDER_WIDTH, 0, 10, profile.AutoFollowDistance, (i) => { profile.AutoFollowDistance = i; }), true, page);
+
+            content.BlankLine();
+
+            content.AddToRight(c = new CheckboxWithLabel("Disable mouse interactions for overhead text", 0, profile.DisableMouseInteractionOverheadText, (b) => { profile.DisableMouseInteractionOverheadText = b; }), true, page);
+
             #endregion
 
             #region Misc
@@ -2123,7 +2137,7 @@ namespace ClassicUO.Game.UI.Gumps
 
             content.AddToRight(new CheckboxWithLabel("Enable health indicator border", 0, profile.EnableHealthIndicator, (b) => { profile.EnableHealthIndicator = b; }), true, page);
             content.Indent();
-            content.AddToRight(new SliderWithLabel("Only show below hp %", 0, Theme.SLIDER_WIDTH, 1, 100, (int)profile.ShowHealthIndicatorBelow, (i) => { profile.ShowHealthIndicatorBelow = i; }), true, page);
+            content.AddToRight(new SliderWithLabel("Only show below hp %", 0, Theme.SLIDER_WIDTH, 1, 100, (int)profile.ShowHealthIndicatorBelow * 100, (i) => { profile.ShowHealthIndicatorBelow = i / 100f; }), true, page);
             content.AddToRight(new SliderWithLabel("Size", 0, Theme.SLIDER_WIDTH, 1, 25, profile.HealthIndicatorWidth, (i) => { profile.HealthIndicatorWidth = i; }), true, page);
             content.RemoveIndent();
 
@@ -2203,6 +2217,16 @@ namespace ClassicUO.Game.UI.Gumps
             content.BlankLine();
 
             content.AddToRight(new CheckboxWithLabel("Enable auto resync on hang detection", 0, profile.ForceResyncOnHang, (b) => { profile.ForceResyncOnHang = b; }), true, page);
+
+            content.BlankLine();
+
+            content.AddToRight(new SliderWithLabel("Player Offset X", 0, Theme.SLIDER_WIDTH, -20, 20, profile.PlayerOffset.X, (i) => { profile.PlayerOffset = new Point(i, profile.PlayerOffset.Y); }), true, page);
+            content.AddToRight(new SliderWithLabel("Player Offset Y", 0, Theme.SLIDER_WIDTH, -20, 20, profile.PlayerOffset.Y, (i) => { profile.PlayerOffset = new Point(profile.PlayerOffset.X, i); }), true, page);
+
+            content.BlankLine();
+
+            content.AddToRight(new CheckboxWithLabel("Use land textures where available(Experimental)", 0, profile.UseLandTextures, (b) => { profile.UseLandTextures = b; }), true, page);
+
             #endregion
 
             #region Tooltips
@@ -2271,8 +2295,17 @@ namespace ClassicUO.Game.UI.Gumps
             content.BlankLine();
             #endregion
 
-            #region Settings transfers
+            #region Controller settings
             page = ((int)PAGE.TUOOptions + 1008);
+            content.AddToLeft(SubCategoryButton("Controller", page, content.LeftWidth));
+            content.ResetRightSide();
+
+            content.AddToRight(new SliderWithLabel("Mouse Sensitivity", 0, Theme.SLIDER_WIDTH, 1, 20, profile.ControllerMouseSensativity, (i) => { profile.ControllerMouseSensativity = i; }), true, page);
+
+            #endregion
+
+            #region Settings transfers
+            page = ((int)PAGE.TUOOptions + 1009);
             content.AddToLeft(SubCategoryButton("Settings transfers", page, content.LeftWidth));
             content.ResetRightSide();
 
@@ -2351,14 +2384,112 @@ namespace ClassicUO.Game.UI.Gumps
                 }
             };
 
+            #region Hidden layers
+            page = ((int)PAGE.TUOOptions + 1010);
+            content.AddToLeft(SubCategoryButton("Visible Layers", page, content.LeftWidth));
+            content.ResetRightSide();
+
+            content.AddToRight(new TextBox("These settings are to hide layers on in-game mobiles. Check the box to hide that layer.", Theme.FONT, Theme.STANDARD_TEXT_SIZE, content.RightWidth - 20, Theme.TEXT_FONT_COLOR, FontStashSharp.RichText.TextHorizontalAlignment.Center, false) { AcceptMouseInput = false }, true, page);
+
+            content.BlankLine();
+
+            content.AddToRight(new CheckboxWithLabel("Only for yourself", 0, profile.HideLayersForSelf, (b) => { profile.HideLayersForSelf = b; }), true, page);
+
+            content.BlankLine();
+
+            bool rightSide = false;
+            foreach (Layer layer in (Layer[])Enum.GetValues(typeof(Layer)))
+            {
+                if (layer == Layer.Invalid || layer == Layer.Hair || layer == Layer.Beard || layer == Layer.Backpack || layer == Layer.ShopBuyRestock || layer == Layer.ShopBuy || layer == Layer.ShopSell || layer == Layer.Bank || layer == Layer.Face || layer == Layer.Talisman || layer == Layer.Mount)
+                {
+                    continue;
+                }
+                if (!rightSide)
+                {
+                    content.AddToRight(c = new CheckboxWithLabel(layer.ToString(), 0, profile.HiddenLayers.Contains((int)layer), (b) => { if (b) { profile.HiddenLayers.Add((int)layer); } else { profile.HiddenLayers.Remove((int)layer); } }), true, page);
+                    rightSide = true;
+                }
+                else
+                {
+                    content.AddToRight(new CheckboxWithLabel(layer.ToString(), 0, profile.HiddenLayers.Contains((int)layer), (b) => { if (b) { profile.HiddenLayers.Add((int)layer); } else { profile.HiddenLayers.Remove((int)layer); } }) { X = 200, Y = c.Y }, false, page);
+                    rightSide = false;
+                }
+            }
+            #endregion
+
             options.Add(
-                new SettingsOption(
-                    "",
-                    content,
-                    mainContent.RightWidth,
-                    PAGE.TUOOptions
-                    )
-                );
+            new SettingsOption(
+                "",
+                content,
+                mainContent.RightWidth,
+                PAGE.TUOOptions
+                )
+            );
+        }
+
+        public string GetPageString()
+        {
+            string page = mainContent.ActivePage.ToString();
+
+            foreach (Control c in mainContent.RightArea.Children)
+            {
+                if (c is Area && c.Page == mainContent.ActivePage)
+                {
+                    foreach (Control c2 in c.Children)
+                    {
+                        if (c2 is LeftSideMenuRightSideContent)
+                        {
+                            page += ":" + c2.ActivePage;
+                            return page;
+                        }
+                    }
+                }
+            }
+            return page;
+        }
+
+        public void GoToPage(string pageString)
+        {
+            string[] parts = pageString.Split(':');
+
+            if (parts.Length >= 1)
+            {
+                if (int.TryParse(parts[0], out int p))
+                {
+                    ChangePage(p);
+
+                    if (parts.Length >= 2)
+                    {
+                        if (int.TryParse(parts[1], out int pp))
+                        {
+                            foreach (Control c in mainContent.RightArea.Children)
+                            {
+                                if (c is Area && c.Page == p)
+                                {
+                                    foreach (Control c2 in c.Children)
+                                    {
+                                        if (c2 is LeftSideMenuRightSideContent lsc)
+                                        {
+                                            lsc.ActivePage = pp;
+                                            foreach (Control mb in lsc.LeftArea.Children)
+                                            {
+                                                if (mb is ModernButton button && button.ButtonParameter == pp && button.IsSelectable)
+                                                {
+                                                    button.IsSelected = true;
+                                                    break;
+                                                }
+                                            }
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
         }
 
         public override void ChangePage(int pageIndex)
@@ -2672,7 +2803,7 @@ namespace ClassicUO.Game.UI.Gumps
 
             protected virtual void OnCheckedChanged()
             {
-                ValueChanged.Invoke(IsChecked);
+                ValueChanged?.Invoke(IsChecked);
             }
 
             protected override void OnMouseUp(int x, int y, MouseButtonType button)
@@ -4107,9 +4238,19 @@ namespace ClassicUO.Game.UI.Gumps
                     _is_writing = false;
                 }
 
+                private int GetXOffset()
+                {
+                    if (_caretScreenPosition.X > Width)
+                    {
+                        return _caretScreenPosition.X - Width + 5;
+                    }
+
+                    return 0;
+                }
+
                 public void Click(Point pos)
                 {
-                    pos = new Point(pos.X - ScreenCoordinateX, pos.Y - ScreenCoordinateY);
+                    pos = new Point((pos.X - ScreenCoordinateX), pos.Y - ScreenCoordinateY);
                     CaretIndex = GetIndexFromCoords(pos);
                     SelectionStart = 0;
                     SelectionEnd = 0;
@@ -4118,7 +4259,7 @@ namespace ClassicUO.Game.UI.Gumps
 
                 public void Drag(Point pos)
                 {
-                    pos = new Point(pos.X - ScreenCoordinateX, pos.Y - ScreenCoordinateY);
+                    pos = new Point((pos.X - ScreenCoordinateX), pos.Y - ScreenCoordinateY);
                     int p = 0;
 
                     if (SelectionStart == SelectionEnd)
@@ -4164,13 +4305,14 @@ namespace ClassicUO.Game.UI.Gumps
 
                 public override bool Draw(UltimaBatcher2D batcher, int x, int y)
                 {
+                    int slideX = x - GetXOffset();
+
                     if (batcher.ClipBegin(x, y, Width, Height))
                     {
                         base.Draw(batcher, x, y);
-                        DrawSelection(batcher, x, y);
-                        _rendererText.Draw(batcher, x, y);
-                        DrawCaret(batcher, x, y);
-
+                        DrawSelection(batcher, slideX, y);
+                        _rendererText.Draw(batcher, slideX, y);
+                        DrawCaret(batcher, slideX, y);
                         batcher.ClipEnd();
                     }
 
@@ -4194,7 +4336,7 @@ namespace ClassicUO.Game.UI.Gumps
                             _leftWasDown = true;
                         }
 
-                        Click(Mouse.Position);
+                        Click(new Point(x + ScreenCoordinateX + GetXOffset(), y + ScreenCoordinateY));
                     }
 
                     base.OnMouseDown(x, y, button);
@@ -4219,7 +4361,7 @@ namespace ClassicUO.Game.UI.Gumps
                         return;
                     }
 
-                    Drag(Mouse.Position);
+                    Drag(new Point(x + ScreenCoordinateX + GetXOffset(), y + ScreenCoordinateY));
                 }
 
                 public override void Dispose()
@@ -4294,6 +4436,7 @@ namespace ClassicUO.Game.UI.Gumps
                     {
                         db.Remove(this);
                         db.ReArrangeChildren();
+                        db.ForceSizeUpdate();
                     }
                     Client.Game.GetScene<GameScene>().InfoBars?.RemoveItem(item);
                     UIManager.GetGump<InfoBarGump>()?.ResetItems();
@@ -4709,6 +4852,15 @@ namespace ClassicUO.Game.UI.Gumps
                 return true;
             }
 
+            protected override void OnMouseEnter(int x, int y)
+            {
+                base.OnMouseEnter(x, y);
+                if (UIManager.KeyboardFocusControl == UIManager.SystemChat.TextBoxControl || UIManager.KeyboardFocusControl == null)
+                {
+                    UIManager.KeyboardFocusControl = this; //Dirty fix for mouse wheel macros
+                }
+            }
+
             protected override void OnMouseWheel(MouseEventType delta)
             {
                 switch (delta)
@@ -4959,7 +5111,7 @@ namespace ClassicUO.Game.UI.Gumps
             {
                 MacroObject ob = (MacroObject)Macro.Items;
 
-                if (ob.Code == MacroType.None)
+                if (ob == null || ob.Code == MacroType.None)
                 {
                     return;
                 }
@@ -4980,9 +5132,9 @@ namespace ClassicUO.Game.UI.Gumps
 
                 Macro.PushToBack(obj);
 
-                Control c;
-                _databox.Add(c = new MacroEntry(this, obj, _allHotkeysNames));
+                _databox.Add(new MacroEntry(this, obj, _allHotkeysNames));
                 _databox.ReArrangeChildren();
+                _databox.ForceSizeUpdate();
                 ForceSizeUpdate();
             }
 
@@ -5033,6 +5185,7 @@ namespace ClassicUO.Game.UI.Gumps
                 }
 
                 _databox.ReArrangeChildren();
+                _databox.ForceSizeUpdate();
             }
 
             private void SetupKeyByDefault()
@@ -5040,6 +5193,11 @@ namespace ClassicUO.Game.UI.Gumps
                 if (Macro == null || _hotkeyBox == null)
                 {
                     return;
+                }
+
+                if (Macro.ControllerButtons != null && Macro.ControllerButtons.Length > 0)
+                {
+                    _hotkeyBox.SetButtons(Macro.ControllerButtons);
                 }
 
                 SDL.SDL_Keymod mod = SDL.SDL_Keymod.KMOD_NONE;
@@ -5130,12 +5288,20 @@ namespace ClassicUO.Game.UI.Gumps
                         return;
                     }
                 }
+                else if (_hotkeyBox.Buttons != null && _hotkeyBox.Buttons.Length > 0)
+                {
+
+                }
                 else
                 {
                     return;
                 }
 
                 Macro m = Macro;
+                if (_hotkeyBox.Buttons != null && _hotkeyBox.Buttons.Length > 0)
+                {
+                    m.ControllerButtons = _hotkeyBox.Buttons;
+                }
                 m.Key = _hotkeyBox.Key;
                 m.MouseButton = _hotkeyBox.MouseButton;
                 m.WheelScroll = _hotkeyBox.WheelScroll;
@@ -5229,12 +5395,13 @@ namespace ClassicUO.Game.UI.Gumps
                     Control c;
                     Add(c = new ModernButton(mainBox.Width + 10, 0, 75, 40, ButtonAction.Activate, ResGumps.Remove, Theme.BUTTON_FONT_COLOR) { ButtonParameter = (int)buttonsOption.RemoveBtn, IsSelectable = false });
 
-                    Width = mainBox.Width + c.Width;
-                    Height = c.Height;
-
                     mainBox.Y = (c.Height >> 1) - (mainBox.Height >> 1);
 
+                    Height = c.Height;
+
                     AddSubMacro(obj);
+
+                    ForceSizeUpdate();
                 }
 
 
@@ -5273,7 +5440,7 @@ namespace ClassicUO.Game.UI.Gumps
                             break;
 
                         case 2:
-                            InputField textbox = new InputField(240, 40, 0, 80, obj.HasString() ? ((MacroObjectString)obj).Text : string.Empty, false, (s, e) =>
+                            InputField textbox = new InputField(400, 40, 0, 80, obj.HasString() ? ((MacroObjectString)obj).Text : string.Empty, false, (s, e) =>
                             {
                                 if (obj.HasString())
                                 {
@@ -5293,6 +5460,7 @@ namespace ClassicUO.Game.UI.Gumps
                     }
                     ForceSizeUpdate();
                     _control._databox.ReArrangeChildren();
+                    _control._databox.ForceSizeUpdate();
                     _control.ForceSizeUpdate();
                 }
 
@@ -5305,6 +5473,7 @@ namespace ClassicUO.Game.UI.Gumps
                             _control.Macro.Remove(_obj);
                             Dispose();
                             _control._databox.ReArrangeChildren();
+                            _control._databox.ForceSizeUpdate();
                             _control.ForceSizeUpdate();
                             //_control.SetupMacroUI();
                             OnDelete?.Invoke(this, _obj);
@@ -5381,6 +5550,7 @@ namespace ClassicUO.Game.UI.Gumps
             }
 
             public SDL.SDL_Keycode Key { get; private set; }
+            public SDL.SDL_GameControllerButton[] Buttons { get; private set; }
             public MouseButtonType MouseButton { get; private set; }
             public bool WheelScroll { get; private set; }
             public bool WheelUp { get; private set; }
@@ -5408,12 +5578,27 @@ namespace ClassicUO.Game.UI.Gumps
 
             public event EventHandler HotkeyChanged, HotkeyCancelled;
 
+            protected override void OnControllerButtonDown(SDL.SDL_GameControllerButton button)
+            {
+                if (IsActive)
+                {
+                    SetButtons(Controller.PressedButtons());
+                }
+            }
+
             protected override void OnKeyDown(SDL.SDL_Keycode key, SDL.SDL_Keymod mod)
             {
                 if (IsActive)
                 {
                     SetKey(key, mod);
                 }
+            }
+
+            public void SetButtons(SDL.SDL_GameControllerButton[] buttons)
+            {
+                ResetBinding();
+                Buttons = buttons;
+                _label.Text = Controller.GetButtonNames(buttons);
             }
 
             public void SetKey(SDL.SDL_Keycode key, SDL.SDL_Keymod mod)
@@ -5530,6 +5715,7 @@ namespace ClassicUO.Game.UI.Gumps
                 WheelScroll = false;
                 Mod = 0;
                 _label.Text = "None";
+                Buttons = null;
             }
 
             private void LabelOnMouseUp(object sender, MouseEventArgs e)
