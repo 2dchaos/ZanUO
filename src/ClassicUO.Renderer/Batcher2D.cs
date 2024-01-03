@@ -892,7 +892,8 @@ namespace ClassicUO.Renderer
                 }
                 else
                 {
-                    destH -= 0.25f;
+                    destH -= 0.25f;//Altura
+                    destW += 0.5f;//Largura
                 }
             }
 

@@ -763,8 +763,8 @@ namespace ClassicUO.Game.GameObjects
                     }
                     else
                     {
-                        frameWidth = spriteInfo.UV.Width;
-                        frameCenterX = spriteInfo.Center.X;
+                        frameWidth = (int)(spriteInfo.UV.Width * 1.5);
+                        frameCenterX = (int)(spriteInfo.Center.X * 1.5);//Center X Dwarf
                     }
                     if (mounted)
                     {
@@ -790,8 +790,8 @@ namespace ClassicUO.Game.GameObjects
                         }
                         else
                         {
-                            frameWidth = spriteInfo.UV.Width;
-                            frameCenterX = spriteInfo.Center.X;
+                            frameWidth = (int)(spriteInfo.UV.Width * 1.5);//equip dwarf
+                            frameCenterX = (int)(spriteInfo.Center.X * 1.5);//equip dwarf
                         }
                         nanize = true;
 
