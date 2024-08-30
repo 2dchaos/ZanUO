@@ -64,6 +64,45 @@ namespace ClassicUO.Game.Scenes
             _selectionEnd;
         private int AnchorOffset => ProfileManager.CurrentProfile.DragSelectAsAnchor ? 0 : 2;
 
+        //peek
+        public void TurnCharacterInPlace()
+        {
+
+            if (Keyboard.Alt && Keyboard.Shift && Keyboard.Ctrl)
+            {
+                Client.Game.Scene.Camera.PeekingToMouse = true;
+
+                if (!_rightMousePressed)
+                {
+                    int x = Camera.Bounds.X + (Camera.Bounds.Width >> 1);
+                    int y = Camera.Bounds.Y + (Camera.Bounds.Height >> 1);
+                    Direction direction = (Direction)GameCursor.GetMouseDirection
+                    (
+                        x,
+                        y,
+                        Mouse.Position.X,
+                        Mouse.Position.Y,
+                        1
+                    );
+                    Direction facing = direction;
+                    if (facing == Direction.North)
+                    {
+                        facing = (Direction)8;
+                    }
+
+                    if ((World.Player.Direction) != (facing - 1))
+                    {
+                        NetClient.Socket.Send_TurnRequest(facing - 1);
+                    }
+
+
+                }
+            }
+            else
+            {
+                Client.Game.Scene.Camera.PeekingToMouse = false;
+            }
+        }
         private bool MoveCharacterByMouseInput()
         {
             if ((_rightMousePressed || _continueRunning) && World.InGame) // && !Pathfinder.AutoWalking)
@@ -172,7 +211,7 @@ namespace ClassicUO.Game.Scenes
         }
 
         private bool CanDragSelectOnObject(GameObject obj)
-        {
+        {              
             return obj is null
                 || obj is Static
                 || obj is Land
@@ -267,6 +306,7 @@ namespace ClassicUO.Game.Scenes
 
             foreach (Mobile mobile in World.Mobiles.Values)
             {
+
                 if ((
                         (ProfileManager.CurrentProfile.DragSelect_PlayersModifier == 1 && ctrl) ||
                         (ProfileManager.CurrentProfile.DragSelect_PlayersModifier == 2 && shift) ||
@@ -320,7 +360,7 @@ namespace ClassicUO.Game.Scenes
                 {
                     if (mobile != World.Player)
                     {
-                        if (UIManager.GetGump<BaseHealthBarGump>(mobile) != null)
+                        if (UIManager.GetGump<BaseHealthBarGump>(mobile) != null || mobile.Graphic == 16000)
                         {
                             continue;
                         }
@@ -387,6 +427,7 @@ namespace ClassicUO.Game.Scenes
                         UIManager.Add(hbgc);
 
                         hbgc.SetInScreen();
+
                     }
                 }
             }

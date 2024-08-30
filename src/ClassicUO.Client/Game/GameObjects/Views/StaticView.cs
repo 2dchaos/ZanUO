@@ -109,6 +109,7 @@ namespace ClassicUO.Game.GameObjects
             Vector3 hueVec = ShaderHueTranslator.GetHueVector(hue, partial, AlphaHue / 255f);
 
             bool isTree = StaticFilters.IsTree(graphic, out _);
+            bool isVegetation = StaticFilters.IsVegetation(graphic);
 
             if (isTree && ProfileManager.CurrentProfile.TreeToStumps)
             {
@@ -125,7 +126,9 @@ namespace ClassicUO.Game.GameObjects
                     && ProfileManager.CurrentProfile.ShadowsStatics
                     && (isTree || ItemData.IsFoliage || StaticFilters.IsRock(graphic)),
                 depth,
-                ProfileManager.CurrentProfile.AnimatedWaterEffect && ItemData.IsWet
+                ProfileManager.CurrentProfile.AnimatedWaterEffect && ItemData.IsWet,
+                isVegetation || ItemData.IsFoliage && ProfileManager.CurrentProfile.Sway /*|| (isTree && !ProfileManager.CurrentProfile.TreeToStumps)*/,
+                (X % 5 + Y % 4)
             );
 
             if (ItemData.IsLight)

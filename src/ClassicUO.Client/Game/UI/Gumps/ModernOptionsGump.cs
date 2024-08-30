@@ -544,6 +544,10 @@ namespace ClassicUO.Game.UI.Gumps
             content.AddToRight(new SliderWithLabel(lang.GetVideo.ViewportW, 0, Theme.SLIDER_WIDTH, 0, Client.Game.Window.ClientBounds.Width, profile.GameWindowSize.X, (r) => { profile.GameWindowSize = new Point(r, profile.GameWindowSize.Y); UIManager.GetGump<WorldViewportGump>()?.ResizeGameWindow(profile.GameWindowSize); }), true, page);
             content.AddToRight(new SliderWithLabel(lang.GetVideo.ViewportH, 0, Theme.SLIDER_WIDTH, 0, Client.Game.Window.ClientBounds.Height, profile.GameWindowSize.Y, (r) => { profile.GameWindowSize = new Point(profile.GameWindowSize.X, r); UIManager.GetGump<WorldViewportGump>()?.ResizeGameWindow(profile.GameWindowSize); }), true, page);
 
+            content.AddToRight(new CheckboxWithLabel("Use Sampler", isChecked: profile.Sampler, valueChanged: (b) => { profile.Sampler = b; }), true, page);
+
+            content.AddToRight(new CheckboxWithLabel("Tree sway", isChecked: profile.Sway, valueChanged: (b) => { profile.Sway = b; }), true, page);
+
             #endregion
 
             #region Zoom
@@ -570,8 +574,6 @@ namespace ClassicUO.Game.UI.Gumps
             content.ResetRightSide();
 
             content.AddToRight(new CheckboxWithLabel(lang.GetVideo.AltLights, isChecked: profile.UseAlternativeLights, valueChanged: (b) => { profile.UseAlternativeLights = b; }), true, page);
-
-            content.BlankLine();
 
             content.AddToRight(new CheckboxWithLabel(lang.GetVideo.CustomLLevel, isChecked: profile.UseCustomLightLevel, valueChanged: (b) =>
             {
@@ -604,15 +606,20 @@ namespace ClassicUO.Game.UI.Gumps
             }), true, page);
             content.RemoveIndent();
 
-            content.BlankLine();
+
+            //content.BlankLine();
+
 
             content.AddToRight(new ComboBoxWithLabel(lang.GetVideo.LightType, 0, Theme.COMBO_BOX_WIDTH, new string[] { lang.GetVideo.LightType_Absolute, lang.GetVideo.LightType_Minimum }, profile.LightLevelType, (s, n) => { profile.LightLevelType = s; }), true, page);
 
-            content.BlankLine();
+
+            //content.BlankLine();
+
 
             content.AddToRight(new CheckboxWithLabel(lang.GetVideo.DarkNight, isChecked: profile.UseDarkNights, valueChanged: (b) => { profile.UseDarkNights = b; }), true, page);
 
-            content.BlankLine();
+
+            //content.BlankLine();
 
             content.AddToRight(new CheckboxWithLabel(lang.GetVideo.ColoredLight, isChecked: profile.UseColoredLights, valueChanged: (b) => { profile.UseColoredLights = b; }), true, page);
 
@@ -905,7 +912,6 @@ namespace ClassicUO.Game.UI.Gumps
                 ));
             PositionHelper.PositionControl(s.FullControl);
 
-
             PositionHelper.BlankLine();
 
 
@@ -1042,6 +1048,18 @@ namespace ClassicUO.Game.UI.Gumps
                 PAGE.Speech
             ));
             PositionHelper.PositionExact(s.FullControl, 200, ss.FullControl.Y);
+
+            PositionHelper.BlankLine();
+
+            options.Add(s = new SettingsOption(
+                    "",
+                    new CheckboxWithLabel("Old Style Journal", 0, profile.OldJournal, (b) => { profile.OldJournal = b; }),
+                    mainContent.RightWidth,
+                    PAGE.Speech
+                ));
+            PositionHelper.PositionControl(s.FullControl);
+            ss = s;
+            PositionHelper.BlankLine();
         }
 
         private void BuildCombatSpells()

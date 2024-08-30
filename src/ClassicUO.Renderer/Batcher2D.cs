@@ -425,10 +425,10 @@ namespace ClassicUO.Renderer
             PushSprite(texture);
         }
 
-        public void DrawShadow(Texture2D texture, Vector2 position, Rectangle sourceRect, bool flip, float depth)
+        public void DrawShadow(Texture2D texture, Vector2 position, Rectangle sourceRect, bool flip, float depth, bool nanized = false, bool modx = false)
         {
-            float width = sourceRect.Width;
-            float height = sourceRect.Height * 0.5f;
+            float width = nanized && modx ? sourceRect.Width * 0.4f : sourceRect.Width;
+            float height = sourceRect.Height * (nanized ? modx ? 0.2f : 0.375f : 0.5f);
             float translatedY = position.Y + height - 10;
             float ratio = height / width;
 
@@ -504,14 +504,20 @@ namespace ClassicUO.Renderer
             Vector3 mod,
             Vector3 hue,
             bool flip,
-            float depth
+            float depth,
+            bool nanized
         )
         {
             EnsureSize();
 
-            float h03 = sourceRect.Height * mod.X;
-            float h06 = sourceRect.Height * mod.Y;
-            float h09 = sourceRect.Height * mod.Z;
+            float height = sourceRect.Height;
+            if (nanized)
+            {
+                height *= 0.75f;
+            }
+            float h03 = height * mod.X;
+            float h06 = height * mod.Y;
+            float h09 = height * mod.Z;
 
             float sittingOffset = flip ? -8.0f : 8.0f;
 
@@ -868,12 +874,28 @@ namespace ClassicUO.Renderer
             Vector2 origin,
             float scale,
             SpriteEffects effects,
-            float layerDepth
+            float layerDepth,
+            bool nanized = false,
+            bool modx = false
         )
         {
             float sourceX, sourceY, sourceW, sourceH;
             float destW = scale;
             float destH = scale;
+
+            if (nanized)
+            {
+                if (modx)
+                {
+                    destH -= 0.5f;
+                    destW -= 0.5f;
+                }
+                else
+                {
+                    destH -= 0.25f;//Altura
+                    destW += 0.5f;//Largura
+                }
+            }
 
             if (sourceRectangle.HasValue)
             {
@@ -1367,6 +1389,82 @@ namespace ClassicUO.Renderer
             }
 
             _numSprites = 0;
+        }
+        public void DrawSway(Texture2D texture, Vector2 position, Rectangle sourceRect, Vector3 hue, bool flip, float depth, float swayAmount)
+        {
+            float width = sourceRect.Width;
+            float height = sourceRect.Height * 0.5f;
+            float translatedY = position.Y + height - 10;
+            float ratio = height / width;
+
+            EnsureSize();
+
+            ref PositionNormalTextureColor4 vertex = ref _vertexInfo[_numSprites];
+
+            vertex.Position0.X = position.X;
+            vertex.Position0.Y = position.Y;
+
+            vertex.Position1.X = position.X + sourceRect.Width;
+            vertex.Position1.Y = position.Y;
+
+            vertex.Position2.X = position.X;
+            vertex.Position2.Y = position.Y + sourceRect.Height;
+
+            vertex.Position3.X = position.X + sourceRect.Width;
+            vertex.Position3.Y = position.Y + sourceRect.Height;
+
+            vertex.Position0.Z = depth;
+            vertex.Position1.Z = depth;
+            vertex.Position2.Z = depth;
+            vertex.Position3.Z = depth;
+
+            // SWAY
+            vertex.Position0.X += swayAmount;
+            vertex.Position1.X += swayAmount;
+
+
+
+            float sourceX = ((sourceRect.X + 0.5f) / (float)texture.Width);
+            float sourceY = ((sourceRect.Y + 0.5f) / (float)texture.Height);
+            float sourceW = ((sourceRect.Width - 1f) / (float)texture.Width);
+            float sourceH = ((sourceRect.Height - 1f) / (float)texture.Height);
+
+            byte effects = (byte)((flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None) & (SpriteEffects)0x03);
+
+            vertex.TextureCoordinate0.X = (_cornerOffsetX[0 ^ effects] * sourceW) + sourceX;
+            vertex.TextureCoordinate0.Y = (_cornerOffsetY[0 ^ effects] * sourceH) + sourceY;
+            vertex.TextureCoordinate1.X = (_cornerOffsetX[1 ^ effects] * sourceW) + sourceX;
+            vertex.TextureCoordinate1.Y = (_cornerOffsetY[1 ^ effects] * sourceH) + sourceY;
+            vertex.TextureCoordinate2.X = (_cornerOffsetX[2 ^ effects] * sourceW) + sourceX;
+            vertex.TextureCoordinate2.Y = (_cornerOffsetY[2 ^ effects] * sourceH) + sourceY;
+            vertex.TextureCoordinate3.X = (_cornerOffsetX[3 ^ effects] * sourceW) + sourceX;
+            vertex.TextureCoordinate3.Y = (_cornerOffsetY[3 ^ effects] * sourceH) + sourceY;
+            vertex.TextureCoordinate0.Z = 0;
+            vertex.TextureCoordinate1.Z = 0;
+            vertex.TextureCoordinate2.Z = 0;
+            vertex.TextureCoordinate3.Z = 0;
+
+            vertex.Normal0.X = 0;
+            vertex.Normal0.Y = 0;
+            vertex.Normal0.Z = 1;
+
+            vertex.Normal1.X = 0;
+            vertex.Normal1.Y = 0;
+            vertex.Normal1.Z = 1;
+
+            vertex.Normal2.X = 0;
+            vertex.Normal2.Y = 0;
+            vertex.Normal2.Z = 1;
+
+            vertex.Normal3.X = 0;
+            vertex.Normal3.Y = 0;
+            vertex.Normal3.Z = 1;
+
+            vertex.Hue0.X = vertex.Hue1.X = vertex.Hue2.X = vertex.Hue3.X = hue.X;
+            vertex.Hue0.Z = vertex.Hue1.Z = vertex.Hue2.Z = vertex.Hue3.Z = hue.Z;
+            vertex.Hue0.Y = vertex.Hue1.Y = vertex.Hue2.Y = vertex.Hue3.Y = hue.Y;
+
+            PushSprite(texture);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

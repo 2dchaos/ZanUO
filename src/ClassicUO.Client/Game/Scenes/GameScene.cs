@@ -845,7 +845,9 @@ namespace ClassicUO.Game.Scenes
             Pathfinder.ProcessAutoWalk();
             DelayedObjectClickManager.Update();
 
-            if (!MoveCharacterByMouseInput() && !currentProfile.DisableArrowBtn && !MoveCharByController())
+            TurnCharacterInPlace();
+
+            if (!MoveCharacterByMouseInput() && !currentProfile.DisableArrowBtn)
             {
                 Direction dir = DirectionHelper.DirectionFromKeyboardArrows(
                     _flags[0],
@@ -1146,7 +1148,15 @@ namespace ClassicUO.Game.Scenes
             }
             else
             {
-                batcher.SetSampler(SamplerState.PointClamp);
+                if(ProfileManager.CurrentProfile.Sampler)
+                {
+                    batcher.SetSampler(SamplerState.AnisotropicClamp);
+                }
+                else
+                {
+                    batcher.SetSampler(SamplerState.PointClamp);
+                }
+               
             }
 
             batcher.Begin(null, matrix);

@@ -141,5 +141,39 @@ namespace ClassicUO.Renderer
                 shift += 7;
             }
         }
+
+        public void GetValidCenterX(ushort graphic, out int x)
+        {
+            int index;
+            if (!m_IDs.TryGetValue(graphic, out index))
+            {
+                x = 0;
+                return;
+            }
+            int width = ReadIntegerFromData(ref index);
+            int height = ReadIntegerFromData(ref index);
+            int current = 0;
+            int max = width + (height >> 1) * width;
+            int curx = max;
+            bool inTransparentSpan = true;
+            while (current < max)
+            {
+                int spanLength = ReadIntegerFromData(ref index);
+                current += spanLength;
+                if (!inTransparentSpan)
+                {
+                    int x1 = current % width;
+                    if (x1 < curx)
+                    {
+                        curx = x1;
+                    }
+                }
+                inTransparentSpan = false;
+            }
+            if (curx != max)
+                x = curx;
+            else
+                x = 0;
+        }
     }
 }

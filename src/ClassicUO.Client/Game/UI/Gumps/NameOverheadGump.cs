@@ -91,7 +91,10 @@ namespace ClassicUO.Game.UI.Gumps
                 return;
             }
 
+
+
             _text = new TextBox(string.Empty, ProfileManager.CurrentProfile.NamePlateFont, ProfileManager.CurrentProfile.NamePlateFontSize, 100, entity is Mobile m ? Notoriety.GetHue(m.NotorietyFlag) : (ushort)0x0481, FontStashSharp.RichText.TextHorizontalAlignment.Center);
+
 
             SetTooltip(entity);
 
@@ -527,6 +530,7 @@ namespace ClassicUO.Game.UI.Gumps
                 || entity.IsDestroyed
                 || entity.ObjectHandlesStatus == ObjectHandlesStatus.NONE
                 || entity.ObjectHandlesStatus == ObjectHandlesStatus.CLOSED
+                || entity.Graphic == 16000
             )
             {
                 Dispose();

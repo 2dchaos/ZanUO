@@ -38,6 +38,7 @@ using ClassicUO.Assets;
 using ClassicUO.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using FontStashSharp;
 
 namespace ClassicUO.Game.GameObjects
 {
@@ -255,7 +256,9 @@ namespace ClassicUO.Game.GameObjects
             Vector3 hue,
             bool shadow,
             float depth,
-            bool isWet = false
+            bool isWet = false,
+            bool sway = false,
+            int seed = 0
         )
         {
             ref UOFileIndex index = ref ArtLoader.Instance.GetValidRefEntry(graphic + 0x4000);
@@ -300,17 +303,37 @@ namespace ClassicUO.Game.GameObjects
                     scale = new Vector2(1.1f + sin * 0.1f, 1.1f + cos * 0.5f * 0.1f);
                 }
 
-                batcher.Draw(
+                float amount = 0;
+
+                if (sway && artInfo.UV.Height < 300)
+                {
+                    amount = (float)Math.Max(-1, Math.Sin((Time.Ticks + seed * 100) / 100f));
+                    amount *= Math.Min(artInfo.UV.Height, 150f) / 150f;
+                    batcher.DrawSway(
                     artInfo.Texture,
                     pos,
                     artInfo.UV,
                     hue,
-                    0f,
-                    Vector2.Zero,
-                    scale,
-                    SpriteEffects.None,
-                    depth + 0.5f
-                );
+                    false,
+                    depth + 0.5f,
+                    amount
+                    );
+                }
+                else
+                {
+                    batcher.Draw
+                    (
+                        artInfo.Texture,
+                        pos,
+                        artInfo.UV,
+                        hue,
+                        0f,
+                        Vector2.Zero,
+                        scale,
+                        SpriteEffects.None,
+                        depth + 0.5f
+                    );
+                }
             }
         }
     }

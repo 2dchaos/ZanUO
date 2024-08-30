@@ -7,7 +7,7 @@ namespace ClassicUO.Renderer.Animations
 {
     public sealed class Animations
     {
-        const int MAX_ANIMATIONS_DATA_INDEX_COUNT = 2048;
+        const int MAX_ANIMATIONS_DATA_INDEX_COUNT = 8192;
 
         private readonly TextureAtlas _atlas;
         private readonly PixelPicker _picker = new PixelPicker();

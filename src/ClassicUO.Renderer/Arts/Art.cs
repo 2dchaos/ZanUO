@@ -180,5 +180,10 @@ namespace ClassicUO.Renderer.Arts
                 : _realArtBounds[idx];
 
         public bool PixelCheck(uint idx, int x, int y) => _picker.Get(idx, x, y);
+
+        public void PixelGetCenterX(ushort itemid, out int x)
+        {
+            _picker.GetValidCenterX(itemid, out x);
+        }
     }
 }

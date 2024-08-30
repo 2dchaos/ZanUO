@@ -140,5 +140,28 @@ namespace ClassicUO.Game
             false, // backpack
             true, true, true, false, false, false, false, false
         };
+
+        public const ushort DWARF_ID_M = 1828;
+        public const ushort DWARF_ID_F = 1829;
+        public const ushort DWARF_M_BODY = 54562;
+        public const ushort DWARF_F_BODY = 54563;
+
+        public const ushort ELF_ID_M = 1830;
+        public const ushort ELF_ID_F = 1831;
+        public const ushort ELF_M_BODY = 54539;
+        public const ushort ELF_F_BODY = 54540;
+
+        public const ushort ORC_ID_M = 1832;
+        public const ushort ORC_ID_F = 1833;
+        public const ushort ORC_M_BODY = 54596;
+        public const ushort ORC_F_BODY = 54595;
+
+        public const ushort WOLF_ID_M = 1834;
+        public const ushort WOLF_ID_F = 1835;
+        public const ushort WOLF_M_BODY = 54533;
+        public const ushort WOLF_F_BODY = 54534;
+
+        public static readonly ushort[] NANIZED = { DWARF_ID_M, DWARF_ID_F };
+
     }
 }

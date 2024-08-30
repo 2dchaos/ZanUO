@@ -465,6 +465,9 @@ namespace ClassicUO.Game.Scenes
                 else if (_alphaChanged && obj.AlphaHue != 0xFF)
                 {
                     CalculateAlpha(ref obj.AlphaHue, 0xFF);
+                }else if (obj.Graphic == 16000)
+                {
+                    obj.AlphaHue = 0;
                 }
             }
 

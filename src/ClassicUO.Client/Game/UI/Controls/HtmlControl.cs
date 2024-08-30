@@ -213,6 +213,12 @@ namespace ClassicUO.Game.UI.Controls
                 Add(_scrollBar);
             }
 
+            if (FontsLoader.Instance.GetImageTagInfo(out string link, out int w, out int h, out int x, out int y))
+            {
+                Add(new GumpPicExternalUrl(x, y, link, 0, w, h, true));
+                FontsLoader.Instance.ResetImageLink();
+            }
+
             //if (Width != _gameText.Width)
             //    Width = _gameText.Width;
         }
@@ -319,7 +325,6 @@ namespace ClassicUO.Game.UI.Controls
 
             base.OnMouseUp(x, y, button);
         }
-
         public override void Dispose()
         {
             _gameText?.Destroy();

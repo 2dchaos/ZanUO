@@ -87,6 +87,11 @@ namespace ClassicUO.Game.UI.Gumps
         private Checkbox _enableCounters, _highlightOnUse, _highlightOnAmount, _enableAbbreviatedAmount;
         private Checkbox _enableDragSelect, _dragSelectHumanoidsOnly;
 
+        // ## BEGIN - END ## tabgrid // PKRION
+        private Checkbox _enableTabGridGump;
+        private InputField _tablistBox, _rowsGrid, _tabsGrid;
+        //end Tabgrid gump mod declarations
+
         // sounds
         private Checkbox _enableSounds, _enableMusic, _footStepsSound, _combatMusic, _musicInBackground, _loginMusic;
 
@@ -3140,6 +3145,71 @@ namespace ClassicUO.Game.UI.Gumps
 
             _columns.SetText(_currentProfile.CounterBarColumns.ToString());
 
+            // ## BEGIN - END ## tabgrid // PKRION
+            startX = 5;
+            startY = 250;
+            _enableTabGridGump = AddCheckBox
+            (
+                rightArea,
+                ResGumps.enableTabGridGump,
+                _currentProfile.TabGridGumpEnabled,
+                startX,
+                startY
+            );
+
+            startY += text.Height + 2 + 15;
+
+            _rowsGrid = AddInputField
+            (
+                rightArea,
+                startX,
+                startY,
+                50,
+                30,
+                "Grid Rows",
+                50,
+                false,
+                true,
+                30
+            );
+
+            _rowsGrid.SetText(_currentProfile.GridRows.ToString());
+
+
+            startX += _rows.Width + 5 + 100;
+
+            _tabsGrid = AddInputField
+            (
+                rightArea,
+                startX,
+                startY,
+                50,
+                30,
+                "Number of Tabs",
+                50,
+                false,
+                true,
+                30
+            );
+            _tabsGrid.SetText(_currentProfile.GridTabs.ToString());
+
+            startY += text.Height + 2 + 15;
+            _tablistBox = AddInputField
+            (
+                rightArea,
+                5,
+                startY,
+                400,
+                TEXTBOX_HEIGHT,
+                "List of Tab Names using this format",
+                0,
+                true,
+                false,
+                60
+            );
+
+            _tablistBox.SetText(_currentProfile.TabList.ToString());
+            // ## BEGIN - END ## // PKRION
 
             Add(rightArea, PAGE);
         }
@@ -5020,6 +5090,12 @@ namespace ClassicUO.Game.UI.Gumps
                     _highlightOnAmount.IsChecked = false;
                     _highlightAmount.SetText("5");
                     _abbreviatedAmount.SetText("1000");
+                    // ## BEGIN - END ## tabgrid // PKRION
+                    _enableTabGridGump.IsChecked = false;
+                    _rowsGrid.SetText("1");
+                    _tabsGrid.SetText("1");
+                    _tablistBox.SetText("tab1:tab 2:tab 3");
+                    // ## BEGIN - END ## // PKRION
 
                     break;
 
@@ -5264,9 +5340,9 @@ namespace ClassicUO.Game.UI.Gumps
             _currentProfile.AlwaysRun = _alwaysRun.IsChecked;
             _currentProfile.AlwaysRunUnlessHidden = _alwaysRunUnlessHidden.IsChecked;
             _currentProfile.ShowMobilesHP = _showHpMobile.IsChecked;
-            _currentProfile.HighlightMobilesByPoisoned = _highlightByPoisoned.IsChecked;
-            _currentProfile.HighlightMobilesByParalize = _highlightByParalyzed.IsChecked;
-            _currentProfile.HighlightMobilesByInvul = _highlightByInvul.IsChecked;
+            _currentProfile.HighlightMobilesByPoisoned = false;
+            _currentProfile.HighlightMobilesByParalize = false;
+            _currentProfile.HighlightMobilesByInvul = false;
             _currentProfile.PoisonHue = _poisonColorPickerBox.Hue;
             _currentProfile.ParalyzedHue = _paralyzedColorPickerBox.Hue;
             _currentProfile.InvulnerableHue = _invulnerableColorPickerBox.Hue;
@@ -5541,15 +5617,15 @@ namespace ClassicUO.Game.UI.Gumps
                 Client.Game.SetWindowBorderless(_windowBorderless.IsChecked);
             }
 
-            _currentProfile.UseAlternativeLights = _altLights.IsChecked;
+            _currentProfile.UseAlternativeLights = false;
             _currentProfile.UseCustomLightLevel = _enableLight.IsChecked;
             _currentProfile.LightLevel = (byte)(_lightBar.MaxValue - _lightBar.Value);
             _currentProfile.LightLevelType = _lightLevelType.SelectedIndex;
 
             if (_enableLight.IsChecked)
             {
-                World.Light.Overall = _currentProfile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, _currentProfile.LightLevel) : _currentProfile.LightLevel;
-                World.Light.Personal = 0;
+                //World.Light.Overall = _currentProfile.LightLevelType == 1 ? Math.Min(World.Light.RealOverall, _currentProfile.LightLevel) : _currentProfile.LightLevel;
+                //World.Light.Personal = 0;
             }
             else
             {
@@ -5558,7 +5634,7 @@ namespace ClassicUO.Game.UI.Gumps
             }
 
             _currentProfile.UseColoredLights = _useColoredLights.IsChecked;
-            _currentProfile.UseDarkNights = _darkNights.IsChecked;
+            _currentProfile.UseDarkNights = true;
             _currentProfile.ShadowsEnabled = _enableShadows.IsChecked;
             _currentProfile.ShadowsStatics = _enableShadowsStatics.IsChecked;
             _currentProfile.TerrainShadowsLevel = _terrainShadowLevel.Value;
@@ -5676,7 +5752,36 @@ namespace ClassicUO.Game.UI.Gumps
                     counterGump.IsEnabled = counterGump.IsVisible = _currentProfile.CounterBarEnabled;
                 }
             }
+            // ## BEGIN - END ## tabgrid // PKRION
+            _currentProfile.GridRows = int.Parse(_rowsGrid.Text);
+            _currentProfile.GridTabs = int.Parse(_tabsGrid.Text);
+            _currentProfile.TabList = _tablistBox.Text;
+            _currentProfile.TabGridGumpEnabled = _enableTabGridGump.IsChecked;
+            bool tabgrid = _currentProfile.TabGridGumpEnabled != _customBars.IsChecked;
+            string str2 = _currentProfile.GridRows.ToString();
+            string str1 = _currentProfile.GridTabs.ToString();
 
+            TabGridGump tabgridGump = UIManager.GetGump<TabGridGump>();
+
+            if (_currentProfile.TabGridGumpEnabled)
+            {
+                if (tabgridGump == null)
+                {
+                    UIManager.Add(new TabGridGump());
+                }
+                else
+                {
+                    tabgridGump.SetInScreen();
+                }
+            }
+            else
+            {
+                if (tabgridGump != null)
+                {
+                    tabgridGump.Dispose();
+                }
+            }
+            // ## BEGIN - END ## // PKRION
             // experimental
             // Reset nested checkboxes if parent checkbox is unchecked
             if (!_disableDefaultHotkeys.IsChecked)

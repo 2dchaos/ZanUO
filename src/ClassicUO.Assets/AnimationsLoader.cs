@@ -1630,8 +1630,41 @@ namespace ClassicUO.Assets
 
             public uint DataOffset;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void FixDwarfAnimation(ref byte direction, ref bool mirror, ref int x, ref int y)
+        {
+            const int DWARF_OFFSET_X = 8;
+            int offsX = DWARF_OFFSET_X;
+            if (mirror)
+            {
+                if (direction == 3)
+                {
+                    y += 25;
+                    x += offsX - 4;
+                }
+                else
+                {
+                    y += 9;
+                }
+            }
+            else
+            {
+                if (direction == 3)
+                {
+                    y += 23;
+                    x -= 3;
+                }
+                else
+                {
+                    y += 10;
+                    x -= offsX + 1;
+                }
+            }
+        }
     }
 
+    
     public enum AnimationGroups
     {
         None = 0,
@@ -1840,4 +1873,5 @@ namespace ClassicUO.Assets
         Anim4 = 0x8,
         Anim5 = 0x10,
     }
+
 }

@@ -216,6 +216,13 @@ namespace ClassicUO.Configuration
         public bool UseModernPaperdoll { get; set; } = false;
         public bool OpenModernPaperdollAtMinimizeLoc { get; set; } = false;
 
+        // ## BEGIN - END ## tabgrid // PKRION
+        public bool TabGridGumpEnabled { get; set; }
+        public int GridTabs { get; set; } = 1;
+        public int GridRows { get; set; } = 1;
+        public string TabList { get; set; } = "tab1:tab2:tab3";
+        // ## BEGIN - END ## // PKRION
+
         // Experimental
         public bool CastSpellsByOneClick { get; set; }
         public bool BuffBarTime { get; set; }
@@ -238,6 +245,7 @@ namespace ClassicUO.Configuration
         public int DragSelect_NameplateModifier { get; set; } = 0;
         public bool OverrideContainerLocation { get; set; }
 
+        public bool OldJournal { get; set; } = false;
         public int OverrideContainerLocationSetting { get; set; } // 0 = container position, 1 = top right of screen, 2 = last dragged position, 3 = remember every container
 
         [JsonConverter(typeof(Point2Converter))] public Point OverrideContainerLocationPosition { get; set; } = new Point(200, 200);
@@ -250,7 +258,7 @@ namespace ClassicUO.Configuration
         public bool NameOverheadToggled { get; set; } = false;
         public bool ShowTargetRangeIndicator { get; set; }
         public bool PartyInviteGump { get; set; }
-        public bool CustomBarsToggled { get; set; }
+        public bool CustomBarsToggled { get; set; } = true;
         public bool CBBlackBGToggled { get; set; }
 
         public bool ShowInfoBar { get; set; }
@@ -371,6 +379,10 @@ namespace ClassicUO.Configuration
         public bool CorpseSingleClickLoot { get; set; } = false;
 
         public bool DisableSystemChat { get; set; } = false;
+
+        public bool Sampler { get; set; } = true;
+
+        public bool Sway { get; set; } = true;
 
         #region GRID CONTAINER
         public bool UseGridLayoutContainerGumps { get; set; } = true;
@@ -798,6 +810,12 @@ namespace ClassicUO.Configuration
 
                                     break;
 
+                                // ## BEGIN - END ## tabgrid // PKRION
+                                case GumpType.TabGridGump:
+                                    gump = new TabGridGump();
+                                    break;
+                                // ## BEGIN - END ## // PKRION
+
                                 case GumpType.Container:
                                     gump = new ContainerGump();
 
@@ -826,9 +844,19 @@ namespace ClassicUO.Configuration
                                     break;
 
                                 case GumpType.Journal:
-                                    gump = new ResizableJournal();
-                                    //x = ProfileManager.CurrentProfile.JournalPosition.X;
-                                    //y = ProfileManager.CurrentProfile.JournalPosition.Y;
+
+                                    if (!ProfileManager.CurrentProfile.OldJournal)
+                                    {
+                                        gump = new ResizableJournal();
+                                        
+                                    }
+                                    else
+                                    {
+                                        gump = new JournalGump();
+                                    }
+                                    
+                                    x = ProfileManager.CurrentProfile.JournalPosition.X;
+                                    y = ProfileManager.CurrentProfile.JournalPosition.Y;
                                     break;
 
                                 case GumpType.MacroButton:

@@ -104,7 +104,7 @@ namespace ClassicUO.Game.Managers
 
             foreach (Mobile mobile in World.Mobiles.Values)
             {
-                if (mobile.IsDestroyed)
+                if (mobile.IsDestroyed || mobile.Graphic == 16000)
                 {
                     continue;
                 }
@@ -291,7 +291,7 @@ namespace ClassicUO.Game.Managers
             bool passive
         )
         {
-            if (entity == null)
+            if (entity == null || entity.Graphic == 16000)
             {
                 return;
             }

@@ -63,7 +63,6 @@ namespace ClassicUO.Assets
         private const float ITALIC_FONT_KOEFFICIENT = 3.3f;
 
         private static FontsLoader _instance;
-
         public struct Margin 
         { 
             public int X, Y, Width, Height; 
@@ -107,6 +106,13 @@ namespace ClassicUO.Assets
         private readonly IntPtr[] _unicodeFontAddress = new IntPtr[20];
         private readonly long[] _unicodeFontSize = new long[20];
         private readonly Dictionary<ushort, WebLink> _webLinks = new Dictionary<ushort, WebLink>();
+        //Because CUO did a poor job with this whole idea =/
+        public string ImageUrl { get; private set; } = "";
+        public int ImageWidth { get; private set; } = 100;
+        public int ImageHeight { get; private set; } = 100;
+        public int ImageX { get; private set; } = 0;
+        public int ImageY { get; private set; } = 0;
+
         private readonly int[] _offsetCharTable = { 2, 0, 2, 2, 0, 0, 2, 2, 0, 0 };
         private readonly int[] _offsetSymbolTable = { 1, 0, 1, 1, -1, 0, 1, 1, 0, 0 };
 
@@ -2708,6 +2714,15 @@ namespace ClassicUO.Assets
                         info.Align = current.Align;
 
                         break;
+                    case HTML_TAG_TYPE.HTT_IMG:
+                        info.ImageUrl = current.ImageUrl;
+                        info.ImageWidth = current.ImageWidth;
+                        info.ImageHeight = current.ImageHeight;
+                        ImageUrl = current.ImageUrl;
+                        ImageWidth = current.ImageWidth;
+                        ImageHeight = current.ImageHeight;
+
+                        break;
                 }
             }
         }
@@ -2855,6 +2870,10 @@ namespace ClassicUO.Assets
                 {
                     tag = HTML_TAG_TYPE.HTT_DIV;
                 }
+                else if (span.Equals("img".AsSpan(), StringComparison.InvariantCultureIgnoreCase))
+                {
+                    tag = HTML_TAG_TYPE.HTT_IMG;
+                }
                 else
                 {
                     if (
@@ -2913,6 +2932,7 @@ namespace ClassicUO.Assets
                     {
                         switch (tag)
                         {
+                            case HTML_TAG_TYPE.HTT_IMG:
                             case HTML_TAG_TYPE.HTT_BODYBGCOLOR:
                             case HTML_TAG_TYPE.HTT_BODY:
                             case HTML_TAG_TYPE.HTT_BASEFONT:
@@ -3098,6 +3118,47 @@ namespace ClassicUO.Assets
                                     }
                                 }
 
+                                break;
+
+
+                            case HTML_TAG_TYPE.HTT_IMG:
+                                if (StringHelper.UnsafeCompare(bufferCmd, "src", cmdLenght))
+                                {
+                                    info.ImageUrl = new String(bufferValue, 0, valueLength);
+                                    ImageUrl = info.ImageUrl;
+                                }
+                                if (StringHelper.UnsafeCompare(bufferCmd, "width", cmdLenght))
+                                {
+                                    if (int.TryParse(new String(bufferValue, 0, valueLength), out int w))
+                                    {
+                                        info.ImageWidth = w;
+                                        ImageWidth = w;
+                                    }
+                                }
+                                if (StringHelper.UnsafeCompare(bufferCmd, "height", cmdLenght))
+                                {
+                                    if (int.TryParse(new String(bufferValue, 0, valueLength), out int h))
+                                    {
+                                        info.ImageHeight = h;
+                                        ImageHeight = h;
+                                    }
+                                }
+                                if (StringHelper.UnsafeCompare(bufferCmd, "X", cmdLenght))
+                                {
+                                    if (int.TryParse(new String(bufferValue, 0, valueLength), out int x))
+                                    {
+                                        info.ImageX = x;
+                                        ImageX = x;
+                                    }
+                                }
+                                if (StringHelper.UnsafeCompare(bufferCmd, "Y", cmdLenght))
+                                {
+                                    if (int.TryParse(new String(bufferValue, 0, valueLength), out int y))
+                                    {
+                                        info.ImageY = y;
+                                        ImageY = y;
+                                    }
+                                }
                                 break;
 
                             case HTML_TAG_TYPE.HTT_A:
@@ -3471,6 +3532,26 @@ namespace ClassicUO.Assets
             return textHeight;
         }
 
+        public bool GetImageTagInfo(out string link, out int width, out int height, out int x, out int y)
+        {
+            link = ImageUrl;
+            width = ImageWidth;
+            height = ImageHeight;
+            x = ImageX;
+            y = ImageY;
+            if (string.IsNullOrEmpty(ImageUrl))
+                return false;
+            return true;
+        }
+        public void ResetImageLink()
+        {
+            ImageUrl = "";
+            ImageWidth = 100;
+            ImageHeight = 100;
+            ImageX = 0;
+            ImageY = 0;
+        }
+
         public unsafe (int, int) GetCaretPosUnicode(
             byte font,
             string str,
@@ -3727,8 +3808,8 @@ namespace ClassicUO.Assets
         HTT_CENTER,
         HTT_RIGHT,
         HTT_DIV,
-
-        HTT_BODYBGCOLOR
+        HTT_BODYBGCOLOR,
+        HTT_IMG
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -3825,5 +3906,10 @@ namespace ClassicUO.Assets
         public byte Font;
         public uint Color;
         public ushort Link;
+        public string ImageUrl;
+        public int ImageWidth;
+        public int ImageHeight;
+        public int ImageX;
+        public int ImageY;
     }
 }

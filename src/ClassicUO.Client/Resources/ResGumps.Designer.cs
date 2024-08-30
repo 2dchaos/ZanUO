@@ -1385,6 +1385,15 @@ namespace ClassicUO.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable Tabgrid.
+        /// </summary>
+        public static string enableTabGridGump {
+            get {
+                return ResourceManager.GetString("enableTabGridGump", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enemy Color.
         /// </summary>
         public static string EnemyColor {

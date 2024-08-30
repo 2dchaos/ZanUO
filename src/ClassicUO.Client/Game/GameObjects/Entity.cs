@@ -86,6 +86,7 @@ namespace ClassicUO.Game.GameObjects
         public uint Serial;
         public HitsRequestStatus HitsRequest;
         private ushort hits;
+        public string ProfileURL;
 
         public bool IsHidden => (Flags & Flags.Hidden) != 0;
 
@@ -111,6 +112,7 @@ namespace ClassicUO.Game.GameObjects
         {
             return e != null && Serial == e.Serial;
         }
+
 
         public void FixHue(ushort hue)
         {
